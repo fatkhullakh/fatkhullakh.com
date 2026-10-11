@@ -1,45 +1,40 @@
-@import "@fontsource-variable/newsreader";
-@import "@fontsource-variable/newsreader/wght-italic.css";
 @import "@fontsource-variable/schibsted-grotesk";
 @import "@fontsource-variable/jetbrains-mono";
 
 /*
-  Two themes. Dark is navy ink with gold, light is warm paper with cobalt,
-  the colours of a Samarkand dome. The gold accent is used sparingly.
+  Two themes, both neutral. One accent: a plain signal blue.
 */
 :root,
 :root[data-theme="dark"] {
-  --bg: #0a0e18;
-  --bg-raised: #111727;
-  --line: #1c2336;
-  --text: #e4e6ec;
-  --body: #c9cdd8;
-  --muted: #828aa0;
-  --accent: #d4a85a;
-  --accent-ink: #0a0e18;
-  --accent-soft: rgba(212, 168, 90, 0.1);
-  --ornament: #d4a85a;
-  --ornament-opacity: 0.2;
+  --bg: #0b0d11;
+  --bg-raised: #13161c;
+  --line: #20242c;
+  --text: #ececee;
+  --body: #c4c7ce;
+  --muted: #80858f;
+  --accent: #5b9dff;
+  --accent-ink: #0b0d11;
+  --accent-soft: rgba(91, 157, 255, 0.1);
+  --grid-dot: rgba(255, 255, 255, 0.1);
   color-scheme: dark;
 }
 
 :root[data-theme="light"] {
-  --bg: #f3f1ec;
-  --bg-raised: #e9e6df;
-  --line: #d9d5cc;
-  --text: #171b26;
-  --body: #2c3240;
-  --muted: #646b7b;
-  --accent: #8a5a12;
-  --accent-ink: #f3f1ec;
-  --accent-soft: rgba(138, 90, 18, 0.08);
-  --ornament: #2a4a9a;
-  --ornament-opacity: 0.16;
+  --bg: #f6f7f8;
+  --bg-raised: #eceef1;
+  --line: #dde0e5;
+  --text: #121419;
+  --body: #2e323a;
+  --muted: #646a75;
+  --accent: #1f5fe0;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(31, 95, 224, 0.08);
+  --grid-dot: rgba(0, 0, 0, 0.08);
   color-scheme: light;
 }
 
 :root {
-  --serif: "Newsreader Variable", Georgia, serif;
+  --serif: "Schibsted Grotesk Variable", system-ui, sans-serif; /* headings */
   --sans: "Schibsted Grotesk Variable", system-ui, sans-serif;
   --mono: "JetBrains Mono Variable", ui-monospace, Menlo, Consolas, monospace;
   --measure: 44rem;
@@ -92,16 +87,16 @@ h1,
 h2,
 h3 {
   font-family: var(--serif);
-  font-weight: 450;
+  font-weight: 600;
   line-height: 1.15;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
   margin: 0;
 }
 
 .page-title {
-  font-size: clamp(2.6rem, 6vw, 3.6rem);
-  font-weight: 400;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.4rem, 5.5vw, 3.2rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
   margin: 0 0 1.25rem;
 }
 .page-intro {
@@ -145,7 +140,7 @@ h3 {
   border-bottom-color: var(--accent);
 }
 
-/* Essay body: sans for easy reading, serif headings */
+/* Essay body */
 .prose {
   font-size: 1.125rem;
   line-height: 1.78;
@@ -193,9 +188,7 @@ h3 {
   margin-left: 0;
   padding-left: 1.1em;
   border-left: 2px solid var(--accent);
-  font-family: var(--serif);
-  font-size: 1.2rem;
-  font-style: italic;
+  color: var(--text);
 }
 .prose hr {
   border: 0;

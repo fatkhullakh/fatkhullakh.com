@@ -3,7 +3,7 @@ import "../styles/global.css";
 import Sidebar from "../components/Sidebar.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Footer from "../components/Footer.astro";
-import Ornaments from "../components/Ornaments.astro";
+import DataField from "../components/DataField.astro";
 import { SITE } from "../config";
 
 interface Props {
@@ -32,7 +32,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
-    <meta name="theme-color" content="#0a0e18" />
+    <meta name="theme-color" content="#0b0d11" />
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title ?? SITE.title} />
     <meta property="og:description" content={description} />
@@ -41,7 +41,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <meta name="twitter:card" content="summary" />
   </head>
   <body>
-    <Ornaments />
+    <DataField />
     <div class="shell">
       <Sidebar />
       <div class="column">

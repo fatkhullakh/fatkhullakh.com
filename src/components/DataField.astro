@@ -1,0 +1,193 @@
+---
+// Background: a faint dot grid with small packets travelling along it,
+// like records moving through a pipeline. Each packet takes a few turns,
+// then lands on a node, which blinks once (a "write") and fades.
+// Calm by design: few packets, faint behind the text, frozen for reduced motion.
+---
+<canvas class="field" aria-hidden="true"></canvas>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>("canvas.field")!;
+  const ctx = canvas.getContext("2d")!;
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const GAP = 28; // grid spacing in px
+  const MAX_PACKETS = 7;
+  let w = 0, h = 0, cols = 0, rows = 0, dpr = 1;
+  let dot = "", accent = "";
+
+  type Packet = {
+    x: number; y: number;           // current grid cell
+    dx: number; dy: number;         // direction
+    t: number;                      // progress to next cell, 0..1
+    speed: number;                  // cells per second
+    steps: number;                  // cells left to travel
+    trail: [number, number][];      // past cells
+    landed: number;                 // seconds since landing, -1 while moving
+  };
+  let packets: Packet[] = [];
+
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    dot = cs.getPropertyValue("--grid-dot").trim();
+    accent = cs.getPropertyValue("--accent").trim();
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(w / GAP) + 1;
+    rows = Math.ceil(h / GAP) + 1;
+  }
+
+  const DIRS: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+  function spawn() {
+    const [dx, dy] = DIRS[Math.floor(Math.random() * 4)];
+    packets.push({
+      x: Math.floor(rand(0, cols)),
+      y: Math.floor(rand(0, rows)),
+      dx, dy,
+      t: 0,
+      speed: rand(4, 9),
+      steps: Math.floor(rand(8, 26)),
+      trail: [],
+      landed: -1,
+    });
+  }
+
+  function step(p: Packet, dt: number) {
+    if (p.landed >= 0) { p.landed += dt; return; }
+    p.t += p.speed * dt;
+    while (p.t >= 1) {
+      p.t -= 1;
+      p.trail.push([p.x, p.y]);
+      if (p.trail.length > 7) p.trail.shift();
+      p.x += p.dx;
+      p.y += p.dy;
+      p.steps -= 1;
+      if (p.steps <= 0 || p.x < 0 || p.y < 0 || p.x > cols || p.y > rows) {
+        p.landed = 0;
+        p.t = 0;
+        return;
+      }
+      // sometimes turn 90 degrees at a node
+      if (Math.random() < 0.22) {
+        [p.dx, p.dy] = Math.random() < 0.5 ? [p.dy, -p.dx] : [-p.dy, p.dx];
+      }
+    }
+  }
+
+  function drawGrid() {
+    ctx.fillStyle = dot;
+    for (let i = 0; i < cols; i++)
+      for (let j = 0; j < rows; j++) ctx.fillRect(i * GAP - 0.75, j * GAP - 0.75, 1.5, 1.5);
+  }
+
+  function drawPacket(p: Packet) {
+    const hx = (p.x + p.dx * p.t) * GAP;
+    const hy = (p.y + p.dy * p.t) * GAP;
+    ctx.strokeStyle = accent;
+    ctx.fillStyle = accent;
+
+    if (p.landed >= 0) {
+      // the write: a small square that expands and fades
+      const a = Math.max(0, 1 - p.landed / 0.9);
+      const s = 3 + p.landed * 14;
+      ctx.globalAlpha = a * 0.7;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(hx - s / 2, hy - s / 2, s, s);
+      ctx.globalAlpha = a;
+      ctx.fillRect(hx - 2, hy - 2, 4, 4);
+      // fade the trail with it
+      ctx.globalAlpha = a * 0.25;
+      drawTrail(p, hx, hy);
+      ctx.globalAlpha = 1;
+      return;
+    }
+    ctx.globalAlpha = 0.35;
+    drawTrail(p, hx, hy);
+    ctx.globalAlpha = 0.95;
+    ctx.fillRect(hx - 2, hy - 2, 4, 4);
+    ctx.globalAlpha = 1;
+  }
+
+  function drawTrail(p: Packet, hx: number, hy: number) {
+    if (!p.trail.length) return;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    const [sx, sy] = p.trail[0];
+    ctx.moveTo(sx * GAP, sy * GAP);
+    for (const [x, y] of p.trail.slice(1)) ctx.lineTo(x * GAP, y * GAP);
+    ctx.lineTo(p.x * GAP, p.y * GAP);
+    ctx.lineTo(hx, hy);
+    ctx.stroke();
+  }
+
+  let last = performance.now();
+  let sinceSpawn = 0;
+  let running = true;
+
+  function frame(now: number) {
+    if (!running) return;
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    sinceSpawn += dt;
+    if (sinceSpawn > 0.9 && packets.length < MAX_PACKETS) {
+      spawn();
+      sinceSpawn = 0;
+    }
+    packets.forEach((p) => step(p, dt));
+    packets = packets.filter((p) => p.landed < 0.9);
+
+    ctx.clearRect(0, 0, w, h);
+    drawGrid();
+    packets.forEach(drawPacket);
+    requestAnimationFrame(frame);
+  }
+
+  readColors();
+  resize();
+  if (still) {
+    drawGrid();
+  } else {
+    for (let i = 0; i < 4; i++) spawn();
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener("resize", () => { resize(); if (still) drawGrid(); });
+  document.addEventListener("themechange", () => {
+    // wait one tick so the new theme's colors are applied
+    requestAnimationFrame(() => { readColors(); if (still) { ctx.clearRect(0, 0, w, h); drawGrid(); } });
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (still) return;
+    running = !document.hidden;
+    if (running) { last = performance.now(); requestAnimationFrame(frame); }
+  });
+</script>
+
+<style>
+  .field {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    /* quiet behind the reading column, livelier towards the right edge */
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.3) 40%, #000 80%);
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.3) 40%, #000 80%);
+  }
+  @media (max-width: 900px) {
+    .field {
+      -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.25));
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.25));
+    }
+  }
+</style>

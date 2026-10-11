@@ -13,7 +13,7 @@ const featured = (await getProjects()).slice(0, 4);
     <h1>Hi, I'm {SITE.name}.</h1>
     <p class="nick">You can call me {SITE.nickname}.</p>
     <p class="typed">
-      I write about <em data-typed data-phrases={JSON.stringify(SITE.typing)}>{SITE.typing[0]}</em><span class="caret" aria-hidden="true"></span>
+      <span class="prompt" aria-hidden="true">&gt;</span>I write about <em data-typed data-phrases={JSON.stringify(SITE.typing)}>{SITE.typing[0]}</em><span class="caret" aria-hidden="true"></span>
     </p>
     <p class="lede">
       I'm a data engineer in {SITE.city}. I keep notes on what I learn at work, and I write up
@@ -84,10 +84,10 @@ const featured = (await getProjects()).slice(0, 4);
     padding-bottom: 6rem;
   }
   h1 {
-    font-size: clamp(2.8rem, 7.5vw, 5.4rem);
-    font-weight: 400;
-    letter-spacing: -0.035em;
-    line-height: 1.02;
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    font-weight: 650;
+    letter-spacing: -0.05em;
+    line-height: 1;
   }
   .nick {
     font-family: var(--mono);
@@ -96,16 +96,17 @@ const featured = (await getProjects()).slice(0, 4);
     margin: 1.1rem 0 0;
   }
   .typed {
-    font-family: var(--serif);
-    font-size: clamp(1.35rem, 3vw, 1.7rem);
+    font-family: var(--mono);
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
     margin: 2.25rem 0 0;
     min-height: 2.6em;
   }
-  .typed em { color: var(--text); }
+  .typed em { font-style: normal; color: var(--text); }
+  .typed .prompt { color: var(--accent); margin-right: 0.6em; }
   .caret {
     display: inline-block;
-    width: 1px;
-    height: 1.1em;
+    width: 0.55em;
+    height: 1.15em;
     margin-left: 2px;
     vertical-align: -0.15em;
     background: var(--accent);
@@ -131,7 +132,7 @@ const featured = (await getProjects()).slice(0, 4);
     border-bottom: 1px solid var(--line);
   }
   .projects li:first-child { border-top: 1px solid var(--line); }
-  .pname { font-family: var(--serif); font-size: 1.3rem; text-decoration: none; }
+  .pname { font-size: 1.15rem; font-weight: 550; letter-spacing: -0.015em; text-decoration: none; }
   .kind { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-align: right; }
   @media (max-width: 900px) {
     .hero { min-height: 0; padding: 2rem 0 4rem; }

@@ -76,9 +76,10 @@ const links = [
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    font-family: var(--serif);
-    font-size: 1.45rem;
-    letter-spacing: -0.01em;
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     text-decoration: none;
     color: var(--text);
   }
@@ -112,7 +113,7 @@ const links = [
     width: 0.4rem;
     height: 0.4rem;
     background: var(--accent);
-    transform: translateY(-50%) rotate(45deg);
+    transform: translateY(-50%);
   }
   .bottom { margin-top: auto; }
   .clock {
@@ -138,7 +139,7 @@ const links = [
       padding: 1.25rem 1rem 0;
     }
     .place, .bottom { display: none; }
-    .brand { font-size: 1.3rem; }
+    .brand { font-size: 1rem; }
     nav {
       flex-direction: row;
       flex-wrap: wrap;
