@@ -1,0 +1,49 @@
+---
+import Base from "../layouts/Base.astro";
+import PostList from "./PostList.astro";
+import TagFilter from "./TagFilter.astro";
+import { getPosts, groupByYear, tagCounts } from "../lib/posts";
+import { SITE, TAGS, type Tag } from "../config";
+
+interface Props { tag?: Tag }
+const { tag } = Astro.props;
+
+const all = await getPosts();
+const posts = tag ? all.filter((p) => p.data.tag === tag) : all;
+const years = groupByYear(posts);
+
+const intros: Record<"all" | Tag, string> = {
+  all: "Interview write-ups and notes on data engineering. If something is wrong or unclear, tell me. I'd rather fix it than leave it.",
+  interviews:
+    "Every interview I go through, written up after the process ends: the stages, what each round tested, where I struggled and what I'd prepare differently.",
+  notes: "Things I learned and wanted to understand properly, explained the way I'd have wanted them explained to me.",
+  projects: "Write-ups of things I built: the decisions, the mistakes, and what I'd change.",
+};
+const key = tag ?? "all";
+---
+<Base
+  title={tag ? TAGS[tag] : "Writing"}
+  description={intros[key]}
+>
+  <h1 class="page-title">{tag ? TAGS[tag] : "Writing"}</h1>
+  <p class="page-intro">{intros[key]}</p>
+  <div class="subs">
+    <a href="/rss.xml" class="cmd">subscribe with rss</a>
+    {SITE.links.linkedin && <a href={SITE.links.linkedin} class="cmd">follow on linkedin</a>}
+  </div>
+
+  <TagFilter active={key} counts={tagCounts(all)} />
+
+  {years.length === 0 && <p class="muted">Nothing here yet. The first one is on its way.</p>}
+  {years.map(([year, list]) => (
+    <section class="year">
+      <h2 class="section-title">{year}</h2>
+      <PostList posts={list} showTag={!tag} />
+    </section>
+  ))}
+</Base>
+
+<style>
+  .subs { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
+  .year + .year { margin-top: 3rem; }
+</style>

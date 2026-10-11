@@ -1,0 +1,50 @@
+---
+import Icon from "./Icons.astro";
+---
+<button class="toggle" type="button" data-theme-toggle aria-label="Switch to light theme">
+  <span class="sun"><Icon name="sun" /></span>
+  <span class="moon"><Icon name="moon" /></span>
+</button>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  const root = document.documentElement;
+  const label = () =>
+    btn?.setAttribute(
+      "aria-label",
+      root.dataset.theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
+    );
+  label();
+  btn?.addEventListener("click", () => {
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch {}
+    label();
+  });
+</script>
+
+<style>
+  .toggle {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 10;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toggle:hover { color: var(--accent); border-color: var(--accent); }
+  .toggle span { display: flex; }
+  :global(:root[data-theme="dark"]) .moon,
+  :global(:root[data-theme="light"]) .sun { display: none; }
+  @media (max-width: 900px) {
+    .toggle { position: absolute; top: 1rem; right: 1rem; }
+  }
+</style>

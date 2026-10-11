@@ -4,29 +4,39 @@ import { projects } from "../data/projects";
 ---
 <Base title="Projects" description="Things I've built and shipped.">
   <h1 class="page-title">Projects</h1>
+  <p class="page-intro">Things I've built and shipped, at work and on my own.</p>
   <ul class="list">
     {projects.map((p) => (
       <li>
         <div class="top">
           <h2>{p.url ? <a href={p.url}>{p.name}</a> : p.name}</h2>
-          <span class="muted kind">{p.kind}</span>
+          <span class="kind">{p.kind}</span>
         </div>
-        <p>{p.summary}</p>
-        {p.stack.length > 0 && <p class="stack muted">{p.stack.join(", ")}</p>}
+        <p class="summary">{p.summary}</p>
+        {p.stack.length > 0 && (
+          <ul class="stack">{p.stack.map((s) => <li>{s}</li>)}</ul>
+        )}
       </li>
     ))}
   </ul>
 </Base>
 
 <style>
-  .page-title { font-size: clamp(2.2rem, 6vw, 3rem); margin: 2rem 0 2rem; }
   .list { list-style: none; padding: 0; margin: 0; }
-  li { padding: 1.75rem 0; border-top: 1px solid var(--line); }
-  li:last-child { border-bottom: 1px solid var(--line); }
+  .list > li { padding: 1.9rem 0; border-top: 1px solid var(--line); }
+  .list > li:last-child { border-bottom: 1px solid var(--line); }
   .top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
-  h2 { font-size: 1.6rem; }
+  h2 { font-size: 1.75rem; font-weight: 400; }
   h2 a { text-decoration-color: var(--accent); }
-  .kind { font-size: 0.9rem; }
-  p { margin: 0.6rem 0 0; max-width: 36rem; }
-  .stack { font-size: 0.9rem; }
+  .kind { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .summary { margin: 0.6rem 0 0; max-width: 36rem; color: var(--body); }
+  .stack { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 1rem 0 0; }
+  .stack li {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.15rem 0.5rem;
+  }
 </style>

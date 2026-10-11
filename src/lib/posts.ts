@@ -32,3 +32,9 @@ export function formatDate(d: Date, withYear = true): string {
 export function readingTime(body = ""): number {
   return Math.max(1, Math.round(body.trim().split(/\s+/).length / 230));
 }
+
+export function tagCounts(posts: Post[]): Record<string, number> {
+  const counts: Record<string, number> = { all: posts.length };
+  for (const p of posts) counts[p.data.tag] = (counts[p.data.tag] ?? 0) + 1;
+  return counts;
+}

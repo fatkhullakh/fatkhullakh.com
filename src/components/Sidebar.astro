@@ -1,0 +1,161 @@
+---
+import Mark from "./Mark.astro";
+import Icon from "./Icons.astro";
+import { SITE } from "../config";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const nav = [
+  { href: "/", label: "Home" },
+  { href: "/writing", label: "Writing" },
+  { href: "/projects", label: "Projects" },
+  { href: "/about", label: "About" },
+  ...(SITE.resume ? [{ href: SITE.resume, label: "Resume" }] : []),
+];
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+
+const links = [
+  { href: SITE.links.github, label: "GitHub", icon: "github" },
+  { href: SITE.links.linkedin, label: "LinkedIn", icon: "linkedin" },
+  { href: SITE.email ? `mailto:${SITE.email}` : "", label: "Email", icon: "mail" },
+  { href: "/rss.xml", label: "RSS feed", icon: "rss" },
+].filter((l) => l.href) as { href: string; label: string; icon: any }[];
+---
+<aside class="sidebar">
+<div class="inner">
+  <div class="top">
+    <a href="/" class="brand">
+      <Mark size={20} />
+      <span>{SITE.brand}</span>
+    </a>
+    <p class="place">{SITE.city}, {SITE.country}</p>
+  </div>
+
+  <nav aria-label="Main">
+    {nav.map((n) => (
+      <a href={n.href} aria-current={isActive(n.href) ? "page" : undefined}>{n.label}</a>
+    ))}
+  </nav>
+
+  <div class="bottom">
+    <p class="clock" data-clock data-tz={SITE.timezone} data-city={SITE.city}>&nbsp;</p>
+    <div class="links">
+      {links.map((l) => (
+        <a href={l.href} aria-label={l.label} title={l.label}><Icon name={l.icon} /></a>
+      ))}
+    </div>
+  </div>
+</div>
+</aside>
+
+<script>
+  const el = document.querySelector<HTMLElement>("[data-clock]");
+  if (el) {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      timeZone: el.dataset.tz,
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const tick = () => (el.textContent = `${fmt.format(new Date())} in ${el.dataset.city}`);
+    tick();
+    setInterval(tick, 30_000);
+  }
+</script>
+
+<style>
+  .sidebar {
+    width: var(--sidebar);
+    flex-shrink: 0;
+    border-right: 1px solid var(--line);
+  }
+  .inner {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 2.75rem 1.75rem 2rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--serif);
+    font-size: 1.45rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand:hover { color: var(--text); }
+  .place {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0.6rem 0 0 1.75rem;
+  }
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.95rem;
+    margin-top: 4.5rem;
+  }
+  nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 1.02rem;
+    width: fit-content;
+    position: relative;
+  }
+  nav a:hover { color: var(--text); }
+  nav a[aria-current="page"] { color: var(--text); }
+  nav a[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    left: -1.1rem;
+    top: 50%;
+    width: 0.4rem;
+    height: 0.4rem;
+    background: var(--accent);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .bottom { margin-top: auto; }
+  .clock {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0 0 0.9rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .links { display: flex; gap: 0.9rem; }
+  .links a { color: var(--muted); display: flex; }
+  .links a:hover { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .sidebar {
+      width: 100%;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .inner {
+      position: static;
+      height: auto;
+      padding: 1.25rem 1rem 0;
+    }
+    .place, .bottom { display: none; }
+    .brand { font-size: 1.3rem; }
+    nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.25rem 1.25rem;
+      margin: 1rem 0 0;
+      padding-bottom: 0.9rem;
+    }
+    nav a { font-size: 0.95rem; }
+    nav a[aria-current="page"]::before { display: none; }
+    nav a[aria-current="page"] {
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-underline-offset: 0.5em;
+    }
+  }
+</style>

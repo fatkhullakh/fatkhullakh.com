@@ -21,8 +21,8 @@ const facts = [
 <Base title={d.title} description={d.description} type="article">
   <article>
     <header class="post-head">
-      <p class="meta muted">
-        <a href={`/writing/tag/${d.tag}`}>{TAGS[d.tag]}</a>
+      <p class="meta">
+        <a href={`/writing/tag/${d.tag}`}>{TAGS[d.tag].toLowerCase()}</a>
         <span>{formatDate(d.date)}</span>
         <span>{readingTime(post.body)} min read</span>
       </p>
@@ -39,26 +39,36 @@ const facts = [
     <div class="prose">
       <Content />
     </div>
-    <p class="back"><a href="/writing">Back to all writing</a></p>
+    <p class="back"><a href="/writing" class="cmd">back to all writing</a></p>
   </article>
 </Base>
 
 <style>
-  .post-head { padding: 2rem 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
-  .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.92rem; margin: 0 0 1rem; }
+  .post-head { padding: 0 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 2.75rem; }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin: 0 0 1.25rem;
+  }
   .meta a { color: var(--accent); text-decoration: none; }
-  h1 { font-size: clamp(2.1rem, 6vw, 3rem); letter-spacing: -0.02em; }
-  .desc { font-family: var(--serif); font-size: 1.25rem; color: var(--muted); margin: 1rem 0 0; line-height: 1.45; }
+  h1 { font-size: clamp(2.3rem, 5.5vw, 3.4rem); font-weight: 400; letter-spacing: -0.025em; line-height: 1.08; }
+  .desc { font-size: 1.15rem; color: var(--muted); margin: 1.1rem 0 0; line-height: 1.55; }
   .facts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: 1rem;
-    margin: 1.75rem 0 0;
-    padding: 1rem 1.15rem;
+    gap: 1rem 1.5rem;
+    margin: 2rem 0 0;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
     background: var(--bg-raised);
-    border-radius: 8px;
+    border-radius: 0 6px 6px 0;
   }
-  .facts dt { font-size: 0.82rem; color: var(--muted); }
-  .facts dd { margin: 0.1rem 0 0; font-weight: 500; }
-  .back { margin-top: 3.5rem; font-size: 0.95rem; }
+  .facts dt { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .facts dd { margin: 0.2rem 0 0; font-weight: 500; }
+  .back { margin-top: 4rem; }
 </style>

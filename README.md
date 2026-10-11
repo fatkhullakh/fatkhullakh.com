@@ -1,61 +1,97 @@
 # fatkhullakh.com
 
-Personal site and blog. Built with Astro, dark theme, no database. Every post is a markdown file.
+My personal site: writing, projects, about. Built with Astro. No backend, no database. Every post is one markdown file.
 
-## Run it locally
+## 1. Run it on your laptop (one time setup)
 
-```bash
-npm install
-npm run dev
-```
+1. Install **Node.js 22 LTS** from nodejs.org and **Git** from git-scm.com.
+2. Unzip this folder, open a terminal inside it, and run:
+   ```bash
+   npm install
+   npm run dev
+   ```
+3. Open http://localhost:4321. Every time you save a file, the page refreshes by itself.
 
-Open http://localhost:4321. Drafts (`draft: true`) show here with a "draft" label but never on the live site.
+Drafts (`draft: true`) show up here with a "draft" label. They never appear on the live site.
 
-## Write a post
+## 2. Put it online (one time setup, about 15 minutes)
 
+**GitHub**
+1. On github.com, create a new empty repository called `fatkhullakh.com`. No README, no .gitignore.
+2. In the terminal, inside this folder:
+   ```bash
+   git remote add origin https://github.com/fatkhullakh/fatkhullakh.com.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+**Cloudflare Pages**
+3. Cloudflare dashboard > **Workers & Pages** > **Create application** > **Pages** tab > **Import an existing Git repository**.
+4. Connect GitHub, pick the `fatkhullakh.com` repo.
+5. Build settings: production branch `main`, build command `npm run build`, build output directory `dist`.
+6. **Save and Deploy**. After a minute it's live at `something.pages.dev`.
+
+**Your domain**
+7. In the Pages project: **Custom domains** > **Set up a custom domain** > `fatkhullakh.com`. Repeat for `www.fatkhullakh.com`. The domain is already on Cloudflare, so it configures DNS for you.
+
+**Email**
+8. Cloudflare > your domain > **Email** > **Email Routing**. Create `hello@fatkhullakh.com` and forward it to your Gmail. Free.
+
+From now on, every push to `main` updates the live site automatically.
+
+## 3. Publish a new post
+
+**Option A, from your laptop**
 1. Copy `src/content/writing/interview-template.md` (or `note-template.md`).
-2. Rename it. The file name becomes the URL: `fresha-analytics-engineer.md` becomes `/writing/fresha-analytics-engineer`.
-3. Fill in the top block:
-   - `tag`: `interviews`, `notes` or `projects`
-   - `company`, `role`, `outcome`: only for interview posts, shown as a small box under the title
-   - `draft: false` when it's ready to go live
-4. Push to GitHub. The site rebuilds by itself.
+2. Rename it. The file name becomes the URL:
+   `fresha-analytics-engineer.md` becomes `fatkhullakh.com/writing/fresha-analytics-engineer`.
+   Lowercase, words joined with `-`.
+3. Edit the top block:
+   ```yaml
+   title: "Fresha, Analytics Engineer: where my SQL broke"
+   description: "One sentence on what the reader learns."
+   date: 2026-10-12
+   tag: interviews        # interviews, notes or projects
+   draft: false           # true = only visible on your laptop
+   company: "Fresha"      # interview posts only
+   role: "Analytics Engineer"
+   outcome: "Rejected after the SQL round"
+   ```
+4. Write the post below it in markdown. Check it at localhost:4321.
+5. Publish:
+   ```bash
+   git add .
+   git commit -m "New post: Fresha interview"
+   git push
+   ```
 
-Images: put them in `public/images/` and use `![alt text](/images/file.png)`.
+**Option B, no laptop setup needed**
+Go to the repo on github.com > `src/content/writing` > **Add file** > **Create new file**. Paste the post, click **Commit changes**. The site updates in about a minute.
+
+**Images and diagrams**
+Draw in excalidraw.com, export as PNG, put it in `public/images/`, then in the post:
+`![What the diagram shows](/images/my-diagram.png)`
+
+**Markdown basics**
+`## Heading`, `**bold**`, `*italic*`, `- list item`, `[link text](https://...)`, and code blocks with three backticks plus the language (` ```sql `).
 
 ## Things to edit once
 
-- `src/config.ts`: your surname, LinkedIn, email, resume link
-- `src/data/projects.ts`: project list and links
+- `src/config.ts`: LinkedIn link, the rotating "I write about..." lines
+- `src/data/projects.ts`: projects and links
 - `src/pages/about.astro`: rewrite the about text in your own words
-- Put your CV in `public/resume.pdf`, or set `resume: ""` in the config to hide the link
+- `public/resume.pdf`: your CV (or set `resume: ""` in the config to hide the link)
 
-## Put it online (free, Cloudflare Pages)
-
-No backend, no database, no server to pay for. The site is plain HTML files built from your markdown.
-
-1. Create an empty GitHub repo (for example `fatkhullakh/fatkhullakh.com`) and push this folder:
-   ```bash
-   git remote add origin https://github.com/fatkhullakh/fatkhullakh.com.git
-   git push -u origin main
-   ```
-2. Cloudflare dashboard > Workers & Pages > Create > Pages > Connect to Git. Pick the repo.
-3. Build settings: framework preset `Astro`, build command `npm run build`, output directory `dist`. Deploy.
-4. In the Pages project: Custom domains > add `fatkhullakh.com`, then `www.fatkhullakh.com`. The domain is already on Cloudflare, so DNS is set up for you.
-5. Email: your domain > Email > Email Routing. Create `hello@fatkhullakh.com` and forward it to your Gmail. Free.
-
-After that, every `git push` rebuilds the site in about a minute.
-
-## Structure
+## Where things live
 
 ```
 src/
-  config.ts            name, bio, links
+  config.ts            name, links, rotating lines
   content/writing/     all posts (markdown)
   data/projects.ts     project list
-  pages/               home, writing, projects, about, RSS
-  components/          header, footer, lists
-  styles/global.css    colors and fonts
+  pages/               home, writing, projects, about, rss
+  components/          sidebar, theme switch, lists
+  styles/global.css    colors (dark and light) and fonts
 ```
 
-You also get `/rss.xml` and a sitemap automatically.
+You also get `/rss.xml` and a sitemap for Google automatically.
