@@ -1,8 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <rect width="24" height="24" rx="5" fill="#0a0e18"/>
-  <g fill="none" stroke="#5cc8bd" stroke-width="1.6" stroke-linejoin="round">
-    <rect x="6" y="6" width="12" height="12"/>
-    <rect x="6" y="6" width="12" height="12" transform="rotate(45 12 12)"/>
-  </g>
-  <circle cx="12" cy="12" r="1.8" fill="#5cc8bd"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#0a0e18"/>
+  <text x="16" y="23" text-anchor="middle" font-family="Georgia, serif" font-size="21" fill="#e4e6ec">f</text>
 </svg>

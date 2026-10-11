@@ -1,14 +1,22 @@
 ---
 import Base from "../layouts/Base.astro";
 import PostList from "../components/PostList.astro";
+import Rosette from "../components/Rosette.astro";
 import { getPosts } from "../lib/posts";
 import { projects } from "../data/projects";
+import { getRepos } from "../lib/github";
 import { SITE } from "../config";
 
 const posts = (await getPosts()).slice(0, 5);
+const repos = (await getRepos()).slice(0, 3);
+const featured = [
+  ...projects.map((p) => ({ name: p.name, url: p.url, kind: p.kind })),
+  ...repos.map((r) => ({ name: r.name, url: r.url, kind: r.language || "GitHub" })),
+];
 ---
 <Base>
   <section class="hero">
+    <Rosette />
     <h1>Hi, I'm {SITE.name}.</h1>
     <p class="nick">You can call me {SITE.nickname}.</p>
     <p class="typed">
@@ -41,7 +49,7 @@ const posts = (await getPosts()).slice(0, 5);
       <a href="/projects">details</a>
     </h2>
     <ul class="projects">
-      {projects.map((p) => (
+      {featured.map((p) => (
         <li>
           {p.url ? <a href={p.url} class="pname">{p.name}</a> : <span class="pname">{p.name}</span>}
           <span class="kind">{p.kind}</span>
@@ -76,6 +84,8 @@ const posts = (await getPosts()).slice(0, 5);
 
 <style>
   .hero {
+    position: relative;
+    isolation: isolate;
     min-height: calc(100vh - 6.5rem);
     display: flex;
     flex-direction: column;
@@ -100,7 +110,7 @@ const posts = (await getPosts()).slice(0, 5);
     margin: 2.25rem 0 0;
     min-height: 2.6em;
   }
-  .typed em { color: var(--accent); }
+  .typed em { color: var(--text); }
   .caret {
     display: inline-block;
     width: 1px;

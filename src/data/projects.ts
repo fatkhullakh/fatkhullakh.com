@@ -1,15 +1,8 @@
-// Your projects. Order here is the order on the site.
+// Products and work that aren't (or aren't only) on GitHub.
+// Your public GitHub repos are added to the Projects page automatically.
 // `url` is optional: leave it empty if there's nothing public to link to.
 
 export const projects = [
-  {
-    name: "CDC correctness lab",
-    kind: "Open source",
-    summary:
-      "A fault-injection harness that checks whether a Postgres to lakehouse CDC pipeline keeps data correct when things break.",
-    url: "https://github.com/fatkhullakh",
-    stack: ["Debezium", "Postgres", "Delta Lake", "PySpark"],
-  },
   {
     name: "Saqla",
     kind: "Product, co-founded",
@@ -21,7 +14,7 @@ export const projects = [
   {
     name: "NavbatUz",
     kind: "Product, co-founded",
-    summary: "A booking platform for local services in Uzbekistan.",
+    summary: "A booking platform for local services.",
     url: "",
     stack: [],
   },

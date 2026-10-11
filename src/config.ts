@@ -12,12 +12,13 @@ export const SITE = {
   city: "Gdańsk",
   country: "Poland",
   timezone: "Europe/Warsaw",
-  email: "hello@fatkhullakh.com", // turn on Cloudflare Email Routing so this forwards to your inbox
+  email: "tfatkh@gmail.com",
+  github: "fatkhullakh", // your GitHub username, used to list repos on the Projects page
+  hiddenRepos: ["fatkhullakh"] as string[], // repo names you don't want listed
   links: {
     github: "https://github.com/fatkhullakh",
     linkedin: "", // TODO: your LinkedIn URL, leave empty to hide
   },
-  resume: "/resume.pdf", // put resume.pdf in /public, or set to "" to hide
   // The rotating line on the home page: "I write about ..."
   typing: [
     "every interview I go through.",

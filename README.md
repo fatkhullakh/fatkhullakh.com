@@ -34,9 +34,6 @@ Drafts (`draft: true`) show up here with a "draft" label. They never appear on t
 **Your domain**
 7. In the Pages project: **Custom domains** > **Set up a custom domain** > `fatkhullakh.com`. Repeat for `www.fatkhullakh.com`. The domain is already on Cloudflare, so it configures DNS for you.
 
-**Email**
-8. Cloudflare > your domain > **Email** > **Email Routing**. Create `hello@fatkhullakh.com` and forward it to your Gmail. Free.
-
 From now on, every push to `main` updates the live site automatically.
 
 ## 3. Publish a new post
@@ -77,10 +74,20 @@ Draw in excalidraw.com, export as PNG, put it in `public/images/`, then in the p
 
 ## Things to edit once
 
-- `src/config.ts`: LinkedIn link, the rotating "I write about..." lines
-- `src/data/projects.ts`: projects and links
-- `src/pages/about.astro`: rewrite the about text in your own words
-- `public/resume.pdf`: your CV (or set `resume: ""` in the config to hide the link)
+- `src/config.ts`: LinkedIn link, the rotating "I write about..." lines, `hiddenRepos` for GitHub repos you don't want listed
+- `src/data/projects.ts`: products that aren't on GitHub (Saqla, NavbatUz)
+- `src/pages/about.astro`: the about text
+
+## Projects from GitHub
+
+The Projects page lists your public GitHub repos automatically (no forks, no archived ones), newest first.
+The list is fetched when the site builds, so it refreshes on every push.
+To show a repo nicely, give it a description on GitHub (the "About" box on the repo page).
+If builds start failing to load repos, add a `GITHUB_TOKEN` environment variable in the Cloudflare Pages settings.
+
+## RSS
+
+`/rss.xml` is a feed of your posts. People who use a feed reader (Feedly, Inoreader) can follow the blog and get new posts automatically. It's linked quietly in the footer.
 
 ## Where things live
 

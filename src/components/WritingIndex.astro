@@ -3,7 +3,7 @@ import Base from "../layouts/Base.astro";
 import PostList from "./PostList.astro";
 import TagFilter from "./TagFilter.astro";
 import { getPosts, groupByYear, tagCounts } from "../lib/posts";
-import { SITE, TAGS, type Tag } from "../config";
+import { TAGS, type Tag } from "../config";
 
 interface Props { tag?: Tag }
 const { tag } = Astro.props;
@@ -27,10 +27,6 @@ const key = tag ?? "all";
 >
   <h1 class="page-title">{tag ? TAGS[tag] : "Writing"}</h1>
   <p class="page-intro">{intros[key]}</p>
-  <div class="subs">
-    <a href="/rss.xml" class="cmd">subscribe with rss</a>
-    {SITE.links.linkedin && <a href={SITE.links.linkedin} class="cmd">follow on linkedin</a>}
-  </div>
 
   <TagFilter active={key} counts={tagCounts(all)} />
 
@@ -44,6 +40,5 @@ const key = tag ?? "all";
 </Base>
 
 <style>
-  .subs { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
   .year + .year { margin-top: 3rem; }
 </style>

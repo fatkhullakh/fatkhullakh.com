@@ -5,30 +5,17 @@ import { SITE } from "../config";
 <Base title="About">
   <h1 class="page-title">About</h1>
   <div class="prose">
-    <!-- TODO: rewrite this in your own words. Keep it short. -->
     <p>
-      I'm Fatkhullakh Turakhonov. Most people call me Fatz, and you can too. I'm a data engineer from Uzbekistan and I've lived in Gdańsk for the last five years.
-      I studied Data Engineering at Gdańsk University of Technology and have worked with
-      data for about three years, mostly Python, PySpark, SQL, Databricks, dbt and Airflow.
+      I'm {SITE.name}, a data engineer based in {SITE.city}. Most people call me {SITE.nickname}.
+      I work mostly with Python, PySpark, SQL, Databricks, dbt and Airflow.
     </p>
     <p>
-      Outside my day job I run Ferret Labs, a small data consultancy, and I've co-founded
-      two products in Uzbekistan, Saqla and NavbatUz.
+      This site is where I write things down properly: notes on what I learn, and honest
+      write-ups of the interviews I go through, published after each process ends.
     </p>
-    <h2>Why this site exists</h2>
     <p>
-      Most interview advice is vague. I write up every interview I go through after the
-      process ends: the stages, what they tested, where I struggled and what I'd prepare
-      differently. I also keep notes on what I learn, written so that someone a year
-      behind me can follow them.
-    </p>
-    <h2>Get in touch</h2>
-    <p>
-      {SITE.links.linkedin
-        ? <span>The easiest way is <a href={SITE.links.linkedin}>LinkedIn</a>.</span>
-        : <span>The easiest way is <a href={SITE.links.github}>GitHub</a>.</span>}
-      {SITE.email && <span> Or email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</span>}
-      {SITE.resume && <span> My resume is <a href={SITE.resume}>here</a>.</span>}
+      Found a mistake, or want to talk? Email me at
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{SITE.links.linkedin && <span> or find me on <a href={SITE.links.linkedin}>LinkedIn</a></span>}.
     </p>
   </div>
 </Base>

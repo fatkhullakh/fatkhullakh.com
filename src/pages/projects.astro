@@ -1,36 +1,68 @@
 ---
 import Base from "../layouts/Base.astro";
 import { projects } from "../data/projects";
+import { getRepos } from "../lib/github";
+import { SITE } from "../config";
+
+const repos = await getRepos();
+const month = (d: Date) => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 ---
 <Base title="Projects" description="Things I've built and shipped.">
   <h1 class="page-title">Projects</h1>
-  <p class="page-intro">Things I've built and shipped, at work and on my own.</p>
+  <p class="page-intro">Products I've co-founded, and everything public on my GitHub.</p>
+
+  <h2 class="section-title">products</h2>
   <ul class="list">
     {projects.map((p) => (
       <li>
         <div class="top">
-          <h2>{p.url ? <a href={p.url}>{p.name}</a> : p.name}</h2>
+          <h3>{p.url ? <a href={p.url}>{p.name}</a> : p.name}</h3>
           <span class="kind">{p.kind}</span>
         </div>
         <p class="summary">{p.summary}</p>
-        {p.stack.length > 0 && (
-          <ul class="stack">{p.stack.map((s) => <li>{s}</li>)}</ul>
-        )}
+        {p.stack.length > 0 && <ul class="stack">{p.stack.map((s) => <li>{s}</li>)}</ul>}
       </li>
     ))}
   </ul>
+
+  <h2 class="section-title gh">
+    on github
+    <a href={SITE.links.github}>@{SITE.github}</a>
+  </h2>
+  {repos.length === 0
+    ? <p class="muted">See everything on <a href={SITE.links.github}>GitHub</a>.</p>
+    : (
+      <ul class="list">
+        {repos.map((r) => (
+          <li>
+            <div class="top">
+              <h3><a href={r.url}>{r.name}</a></h3>
+              <span class="kind">updated {month(r.pushedAt)}</span>
+            </div>
+            {r.description && <p class="summary">{r.description}</p>}
+            <ul class="stack">
+              {r.language && <li>{r.language}</li>}
+              {r.stars > 0 && <li>{r.stars} {r.stars === 1 ? "star" : "stars"}</li>}
+              {r.homepage && <li><a href={r.homepage}>live</a></li>}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    )}
 </Base>
 
 <style>
-  .list { list-style: none; padding: 0; margin: 0; }
-  .list > li { padding: 1.9rem 0; border-top: 1px solid var(--line); }
+  .list { list-style: none; padding: 0; margin: 0 0 4rem; }
+  .list > li { padding: 1.6rem 0; border-top: 1px solid var(--line); }
   .list > li:last-child { border-bottom: 1px solid var(--line); }
   .top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
-  h2 { font-size: 1.75rem; font-weight: 400; }
-  h2 a { text-decoration-color: var(--accent); }
+  h3 { font-size: 1.55rem; font-weight: 400; }
+  h3 a { text-decoration-color: var(--line); }
+  h3 a:hover { text-decoration-color: var(--accent); }
   .kind { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
-  .summary { margin: 0.6rem 0 0; max-width: 36rem; color: var(--body); }
-  .stack { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 1rem 0 0; }
+  .summary { margin: 0.5rem 0 0; max-width: 36rem; color: var(--body); }
+  .stack { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0.9rem 0 0; }
+  .stack:empty { display: none; }
   .stack li {
     font-family: var(--mono);
     font-size: 0.72rem;
@@ -39,4 +71,5 @@ import { projects } from "../data/projects";
     border-radius: 3px;
     padding: 0.15rem 0.5rem;
   }
+  .stack a { text-decoration: none; }
 </style>
