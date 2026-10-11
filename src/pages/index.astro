@@ -1,22 +1,15 @@
 ---
 import Base from "../layouts/Base.astro";
 import PostList from "../components/PostList.astro";
-import Rosette from "../components/Rosette.astro";
 import { getPosts } from "../lib/posts";
-import { projects } from "../data/projects";
-import { getRepos } from "../lib/github";
+import { getProjects } from "../lib/github";
 import { SITE } from "../config";
 
 const posts = (await getPosts()).slice(0, 5);
-const repos = (await getRepos()).slice(0, 3);
-const featured = [
-  ...projects.map((p) => ({ name: p.name, url: p.url, kind: p.kind })),
-  ...repos.map((r) => ({ name: r.name, url: r.url, kind: r.language || "GitHub" })),
-];
+const featured = (await getProjects()).slice(0, 4);
 ---
 <Base>
   <section class="hero">
-    <Rosette />
     <h1>Hi, I'm {SITE.name}.</h1>
     <p class="nick">You can call me {SITE.nickname}.</p>
     <p class="typed">
@@ -46,7 +39,7 @@ const featured = [
   <section class="block">
     <h2 class="section-title">
       projects
-      <a href="/projects">details</a>
+      <a href="/projects">view all</a>
     </h2>
     <ul class="projects">
       {featured.map((p) => (
@@ -84,8 +77,6 @@ const featured = [
 
 <style>
   .hero {
-    position: relative;
-    isolation: isolate;
     min-height: calc(100vh - 6.5rem);
     display: flex;
     flex-direction: column;
@@ -117,7 +108,7 @@ const featured = [
     height: 1.1em;
     margin-left: 2px;
     vertical-align: -0.15em;
-    background: var(--text);
+    background: var(--accent);
     animation: blink 1.1s steps(1) infinite;
   }
   @keyframes blink { 50% { opacity: 0; } }

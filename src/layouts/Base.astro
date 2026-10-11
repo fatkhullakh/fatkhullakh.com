@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Sidebar from "../components/Sidebar.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Footer from "../components/Footer.astro";
+import Ornaments from "../components/Ornaments.astro";
 import { SITE } from "../config";
 
 interface Props {
@@ -40,6 +41,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <meta name="twitter:card" content="summary" />
   </head>
   <body>
+    <Ornaments />
     <div class="shell">
       <Sidebar />
       <div class="column">

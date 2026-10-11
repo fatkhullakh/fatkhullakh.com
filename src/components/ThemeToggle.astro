@@ -19,6 +19,7 @@ import Icon from "./Icons.astro";
     const next = root.dataset.theme === "dark" ? "light" : "dark";
     root.dataset.theme = next;
     try { localStorage.setItem("theme", next); } catch {}
+    document.dispatchEvent(new CustomEvent("themechange", { detail: next }));
     label();
   });
 </script>

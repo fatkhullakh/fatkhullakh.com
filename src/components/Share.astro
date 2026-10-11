@@ -1,0 +1,60 @@
+---
+interface Props { title: string; url: string }
+const { title, url } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+const targets = [
+  { label: "linkedin", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { label: "x", href: `https://x.com/intent/post?url=${u}&text=${t}` },
+  { label: "telegram", href: `https://t.me/share/url?url=${u}&text=${t}` },
+  { label: "email", href: `mailto:?subject=${t}&body=${u}` },
+];
+---
+<div class="share">
+  <span class="label">share</span>
+  <button type="button" data-copy={url}>copy link</button>
+  {targets.map((s) => (
+    <a href={s.href} target="_blank" rel="noopener">{s.label}</a>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy || location.href);
+        btn.textContent = "copied";
+      } catch {
+        btn.textContent = "couldn't copy, use the address bar";
+      }
+      setTimeout(() => (btn.textContent = "copy link"), 2000);
+    });
+  });
+</script>
+
+<style>
+  .share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+  .label { color: var(--muted); }
+  a, button {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    padding: 0 0 0.1rem;
+  }
+  button {
+    font: inherit;
+    background: none;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    cursor: pointer;
+  }
+  a:hover, button:hover { color: var(--accent); border-bottom-color: var(--accent); }
+</style>

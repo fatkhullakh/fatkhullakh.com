@@ -4,9 +4,8 @@
 @import "@fontsource-variable/jetbrains-mono";
 
 /*
-  Two themes. Dark is navy ink, light is warm paper.
-  The background is a star-and-cross girih tiling, the geometry of Samarkand and Bukhara tilework.
-  Gold lines at night, cobalt by day, kept faint so text always wins.
+  Two themes. Dark is navy ink with gold, light is warm paper with cobalt,
+  the colours of a Samarkand dome. The gold accent is used sparingly.
 */
 :root,
 :root[data-theme="dark"] {
@@ -16,11 +15,11 @@
   --text: #e4e6ec;
   --body: #c9cdd8;
   --muted: #828aa0;
-  --accent: #d6cfbf;
+  --accent: #d4a85a;
   --accent-ink: #0a0e18;
-  --accent-soft: rgba(214, 207, 191, 0.08);
-  --ornament: rgba(201, 164, 92, 0.16);
-  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%23c9a45c' stroke-opacity='0.075' stroke-width='0.8'%3E%3Cpath d='M96.00,48.00 L81.94,62.06 L81.94,81.94 L62.06,81.94 L48.00,96.00 L33.94,81.94 L14.06,81.94 L14.06,62.06 L0.00,48.00 L14.06,33.94 L14.06,14.06 L33.94,14.06 L48.00,0.00 L62.06,14.06 L81.94,14.06 L81.94,33.94Z M75.49,59.39 L64.11,64.11 L59.39,75.49 L48.00,70.78 L36.61,75.49 L31.89,64.11 L20.51,59.39 L25.22,48.00 L20.51,36.61 L31.89,31.89 L36.61,20.51 L48.00,25.22 L59.39,20.51 L64.11,31.89 L75.49,36.61 L70.78,48.00Z M61.30,53.51 L53.51,61.30 L42.49,61.30 L34.70,53.51 L34.70,42.49 L42.49,34.70 L53.51,34.70 L61.30,42.49Z M10.86,10.86 L-10.86,10.86 L-10.86,-10.86 L10.86,-10.86Z M7.68,0.00 L0.00,7.68 L-7.68,0.00 L-0.00,-7.68Z M106.86,10.86 L85.14,10.86 L85.14,-10.86 L106.86,-10.86Z M103.68,0.00 L96.00,7.68 L88.32,0.00 L96.00,-7.68Z M10.86,106.86 L-10.86,106.86 L-10.86,85.14 L10.86,85.14Z M7.68,96.00 L0.00,103.68 L-7.68,96.00 L-0.00,88.32Z M106.86,106.86 L85.14,106.86 L85.14,85.14 L106.86,85.14Z M103.68,96.00 L96.00,103.68 L88.32,96.00 L96.00,88.32Z'/%3E%3Ccircle cx='48.0' cy='48.0' r='2.2'/%3E%3C/g%3E%3C/svg%3E");
+  --accent-soft: rgba(212, 168, 90, 0.1);
+  --ornament: #d4a85a;
+  --ornament-opacity: 0.2;
   color-scheme: dark;
 }
 
@@ -31,11 +30,11 @@
   --text: #171b26;
   --body: #2c3240;
   --muted: #646b7b;
-  --accent: #1f2433;
+  --accent: #8a5a12;
   --accent-ink: #f3f1ec;
-  --accent-soft: rgba(31, 36, 51, 0.06);
-  --ornament: rgba(40, 71, 154, 0.13);
-  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%2328479a' stroke-opacity='0.07' stroke-width='0.8'%3E%3Cpath d='M96.00,48.00 L81.94,62.06 L81.94,81.94 L62.06,81.94 L48.00,96.00 L33.94,81.94 L14.06,81.94 L14.06,62.06 L0.00,48.00 L14.06,33.94 L14.06,14.06 L33.94,14.06 L48.00,0.00 L62.06,14.06 L81.94,14.06 L81.94,33.94Z M75.49,59.39 L64.11,64.11 L59.39,75.49 L48.00,70.78 L36.61,75.49 L31.89,64.11 L20.51,59.39 L25.22,48.00 L20.51,36.61 L31.89,31.89 L36.61,20.51 L48.00,25.22 L59.39,20.51 L64.11,31.89 L75.49,36.61 L70.78,48.00Z M61.30,53.51 L53.51,61.30 L42.49,61.30 L34.70,53.51 L34.70,42.49 L42.49,34.70 L53.51,34.70 L61.30,42.49Z M10.86,10.86 L-10.86,10.86 L-10.86,-10.86 L10.86,-10.86Z M7.68,0.00 L0.00,7.68 L-7.68,0.00 L-0.00,-7.68Z M106.86,10.86 L85.14,10.86 L85.14,-10.86 L106.86,-10.86Z M103.68,0.00 L96.00,7.68 L88.32,0.00 L96.00,-7.68Z M10.86,106.86 L-10.86,106.86 L-10.86,85.14 L10.86,85.14Z M7.68,96.00 L0.00,103.68 L-7.68,96.00 L-0.00,88.32Z M106.86,106.86 L85.14,106.86 L85.14,85.14 L106.86,85.14Z M103.68,96.00 L96.00,103.68 L88.32,96.00 L96.00,88.32Z'/%3E%3Ccircle cx='48.0' cy='48.0' r='2.2'/%3E%3C/g%3E%3C/svg%3E");
+  --accent-soft: rgba(138, 90, 18, 0.08);
+  --ornament: #2a4a9a;
+  --ornament-opacity: 0.16;
   color-scheme: light;
 }
 
@@ -60,9 +59,6 @@ html {
 
 body {
   margin: 0;
-  background-color: var(--bg);
-  background-image: var(--pattern);
-  background-attachment: fixed;
   color: var(--text);
   font-family: var(--sans);
   font-size: 1.0625rem;

@@ -1,0 +1,69 @@
+---
+// Small girih medallions scattered behind the page, like tiles set into a plain wall.
+// Each one is a real star pattern (see src/lib/girih.ts), clipped to a frame shape.
+import { pattern, frame, type PatternKind } from "../lib/girih";
+
+type Shape = "circle" | "octagon" | "star8" | "diamond";
+interface Medallion { kind: PatternKind; cell: number; shape: Shape; cls: string }
+
+const medallions: Medallion[] = [
+  { kind: "rosette12", cell: 30, shape: "circle", cls: "m1" },
+  { kind: "khatam", cell: 34, shape: "octagon", cls: "m2" },
+  { kind: "star6", cell: 62, shape: "star8", cls: "m3" },
+  { kind: "khatam2", cell: 64, shape: "diamond", cls: "m4" },
+  { kind: "rosette12", cell: 40, shape: "octagon", cls: "m5" },
+];
+const R = 140;
+const built = medallions.map((m, i) => ({
+  ...m,
+  id: `girih-${i}`,
+  d: pattern(m.kind, m.cell, R),
+  inner: frame(m.shape, R),
+  outer: frame(m.shape, R + 7),
+}));
+---
+<div class="ornaments" aria-hidden="true">
+  {built.map((m) => (
+    <svg class={`m ${m.cls}`} viewBox="-150 -150 300 300">
+      <defs><clipPath id={m.id}><path d={m.inner} /></clipPath></defs>
+      <g clip-path={`url(#${m.id})`} fill="none" stroke-linejoin="round">
+        <path d={m.d} class="band" />
+        <path d={m.d} class="gap" />
+      </g>
+      <path d={m.inner} class="rim" />
+      <path d={m.outer} class="rim thin" />
+    </svg>
+  ))}
+</div>
+
+<style>
+  .ornaments {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .m {
+    position: absolute;
+    color: var(--ornament);
+    opacity: var(--ornament-opacity);
+  }
+  .band { stroke: currentColor; stroke-width: 6; }
+  .gap { stroke: var(--bg); stroke-width: 3.2; }
+  .rim { fill: none; stroke: currentColor; stroke-width: 2; }
+  .rim.thin { stroke-width: 1.2; }
+
+  /* placement: one cut by the top right corner, one rising from the bottom, small ones scattered */
+  .m1 { width: 300px; height: 300px; top: -95px; right: -95px; }
+  .m2 { width: 150px; height: 150px; right: 7vw; bottom: 9vh; }
+  .m3 { width: 96px; height: 96px; right: 21vw; top: 47vh; }
+  .m4 { width: 64px; height: 64px; right: 34vw; top: 13vh; }
+  .m5 { width: 190px; height: 190px; left: 52vw; bottom: -115px; }
+
+  @media (max-width: 900px) {
+    .m1 { width: 180px; height: 180px; top: -60px; right: -60px; }
+    .m2 { width: 90px; height: 90px; right: -20px; bottom: 6vh; }
+    .m3, .m4, .m5 { display: none; }
+  }
+</style>

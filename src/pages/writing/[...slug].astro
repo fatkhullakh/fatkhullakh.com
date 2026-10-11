@@ -2,7 +2,9 @@
 import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { getPosts, formatDate, readingTime, type Post } from "../../lib/posts";
-import { TAGS } from "../../config";
+import { TAGS, SITE } from "../../config";
+import Share from "../../components/Share.astro";
+import Comments from "../../components/Comments.astro";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -21,6 +23,7 @@ const facts = [
 <Base title={d.title} description={d.description} type="article">
   <article>
     <header class="post-head">
+      <a href="/writing" class="back-top">← all writing</a>
       <p class="meta">
         <a href={`/writing/tag/${d.tag}`}>{TAGS[d.tag].toLowerCase()}</a>
         <span>{formatDate(d.date)}</span>
@@ -39,7 +42,11 @@ const facts = [
     <div class="prose">
       <Content />
     </div>
-    <p class="back"><a href="/writing" class="cmd">back to all writing</a></p>
+    <footer class="post-foot">
+      <Share title={d.title} url={new URL(`/writing/${post.id}`, SITE.url).href} />
+      <Comments />
+      <p class="back"><a href="/writing" class="cmd">← back to all writing</a></p>
+    </footer>
   </article>
 </Base>
 
@@ -70,5 +77,15 @@ const facts = [
   }
   .facts dt { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
   .facts dd { margin: 0.2rem 0 0; font-weight: 500; }
-  .back { margin-top: 4rem; }
+  .back-top {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 2.25rem;
+  }
+  .back-top:hover { color: var(--accent); }
+  .post-foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  .back { margin-top: 3.5rem; }
 </style>

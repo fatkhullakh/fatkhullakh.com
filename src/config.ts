@@ -13,11 +13,18 @@ export const SITE = {
   country: "Poland",
   timezone: "Europe/Warsaw",
   email: "tfatkh@gmail.com",
-  github: "fatkhullakh", // your GitHub username, used to list repos on the Projects page
-  hiddenRepos: ["fatkhullakh"] as string[], // repo names you don't want listed
+  github: "fatkhullakh", // your GitHub username, used for repos listed in src/data/projects.ts
   links: {
     github: "https://github.com/fatkhullakh",
     linkedin: "", // TODO: your LinkedIn URL, leave empty to hide
+  },
+  // Likes and comments under each post, powered by giscus (GitHub Discussions).
+  // Fill these in from https://giscus.app (see README). Leave repoId empty to hide comments.
+  giscus: {
+    repo: "fatkhullakh/fatkhullakh.com",
+    repoId: "",
+    category: "Comments",
+    categoryId: "",
   },
   // The rotating line on the home page: "I write about ..."
   typing: [

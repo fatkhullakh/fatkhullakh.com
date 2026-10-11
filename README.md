@@ -74,16 +74,29 @@ Draw in excalidraw.com, export as PNG, put it in `public/images/`, then in the p
 
 ## Things to edit once
 
-- `src/config.ts`: LinkedIn link, the rotating "I write about..." lines, `hiddenRepos` for GitHub repos you don't want listed
-- `src/data/projects.ts`: products that aren't on GitHub (Saqla, NavbatUz)
+- `src/config.ts`: LinkedIn link, the rotating "I write about..." lines, giscus IDs
+- `src/data/projects.ts`: which projects show, in which order
 - `src/pages/about.astro`: the about text
 
-## Projects from GitHub
+## Projects
 
-The Projects page lists your public GitHub repos automatically (no forks, no archived ones), newest first.
-The list is fetched when the site builds, so it refreshes on every push.
-To show a repo nicely, give it a description on GitHub (the "About" box on the repo page).
-If builds start failing to load repos, add a `GITHUB_TOKEN` environment variable in the Cloudflare Pages settings.
+Only what's listed in `src/data/projects.ts` appears, in that order.
+For a GitHub repo, one line is enough: `{ repo: "cdc-correctness-lab", kind: "open source" }`.
+The name, description, language, stars and link come from GitHub when the site builds, so give the repo a good description on GitHub (the "About" box on the repo page).
+If a listed repo is private or misspelled, it's skipped and the build tells you.
+If builds ever fail to reach GitHub, add a `GITHUB_TOKEN` environment variable in the Cloudflare Pages settings.
+
+## Likes and comments (giscus)
+
+Likes and comments under each post are stored as GitHub Discussions in your site repo, for free. Readers sign in with GitHub to react or comment, which suits a developer audience and keeps spam away.
+
+1. The `fatkhullakh.com` repo must be public. Repo > Settings > General > Features: tick **Discussions**.
+2. Install the giscus app on that repo: github.com/apps/giscus > Install > only select repositories > `fatkhullakh.com`.
+3. Repo > Discussions > categories (pencil icon) > new category called `Comments`, format **Announcement** (so only giscus can start threads).
+4. Open giscus.app, type `fatkhullakh/fatkhullakh.com` in the repository box, pick the `Comments` category.
+5. In the script it generates, copy `data-repo-id` and `data-category-id` into `giscus` in `src/config.ts`. Push.
+
+Each post then shows reactions (the likes) and a comment box. Until the IDs are filled in, that section stays hidden.
 
 ## RSS
 
