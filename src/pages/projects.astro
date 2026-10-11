@@ -1,0 +1,32 @@
+---
+import Base from "../layouts/Base.astro";
+import { projects } from "../data/projects";
+---
+<Base title="Projects" description="Things I've built and shipped.">
+  <h1 class="page-title">Projects</h1>
+  <ul class="list">
+    {projects.map((p) => (
+      <li>
+        <div class="top">
+          <h2>{p.url ? <a href={p.url}>{p.name}</a> : p.name}</h2>
+          <span class="muted kind">{p.kind}</span>
+        </div>
+        <p>{p.summary}</p>
+        {p.stack.length > 0 && <p class="stack muted">{p.stack.join(", ")}</p>}
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<style>
+  .page-title { font-size: clamp(2.2rem, 6vw, 3rem); margin: 2rem 0 2rem; }
+  .list { list-style: none; padding: 0; margin: 0; }
+  li { padding: 1.75rem 0; border-top: 1px solid var(--line); }
+  li:last-child { border-bottom: 1px solid var(--line); }
+  .top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+  h2 { font-size: 1.6rem; }
+  h2 a { text-decoration-color: var(--accent); }
+  .kind { font-size: 0.9rem; }
+  p { margin: 0.6rem 0 0; max-width: 36rem; }
+  .stack { font-size: 0.9rem; }
+</style>

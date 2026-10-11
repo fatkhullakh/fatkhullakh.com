@@ -1,0 +1,58 @@
+---
+import { formatDate, type Post } from "../lib/posts";
+import { TAGS } from "../config";
+
+interface Props {
+  posts: Post[];
+  showYear?: boolean;
+  showTag?: boolean;
+}
+const { posts, showYear = true, showTag = true } = Astro.props;
+---
+<ul class="list">
+  {posts.map((p) => (
+    <li>
+      <a href={`/writing/${p.id}`} class="row">
+        <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, showYear)}</time>
+        <span class="title">
+          {p.data.title}
+          {p.data.draft && <span class="draft">draft</span>}
+        </span>
+        {showTag && <span class="tag">{TAGS[p.data.tag]}</span>}
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .list { list-style: none; padding: 0; margin: 0; }
+  .row {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  li:first-child .row { border-top: 1px solid var(--line); }
+  time { color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .title { font-family: var(--serif); font-size: 1.2rem; line-height: 1.35; }
+  .row:hover .title { color: var(--accent); }
+  .row:hover { color: var(--text); }
+  .tag { color: var(--muted); font-size: 0.85rem; }
+  .draft {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    color: var(--bg);
+    background: var(--muted);
+    border-radius: 3px;
+    padding: 0.05rem 0.35rem;
+    margin-left: 0.4rem;
+    vertical-align: 0.2em;
+  }
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 1fr; gap: 0.15rem; }
+    .tag { display: none; }
+  }
+</style>

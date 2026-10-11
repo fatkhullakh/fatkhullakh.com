@@ -1,0 +1,38 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config";
+---
+<Base title="About">
+  <h1 class="page-title">About</h1>
+  <div class="prose">
+    <!-- TODO: rewrite this in your own words. Keep it short. -->
+    <p>
+      I'm Fatih, a data engineer from Uzbekistan, living in Gdańsk for the last five years.
+      I studied Data Engineering at Gdańsk University of Technology and have worked with
+      data for about three years, mostly Python, PySpark, SQL, Databricks, dbt and Airflow.
+    </p>
+    <p>
+      Outside my day job I run Ferret Labs, a small data consultancy, and I've co-founded
+      two products in Uzbekistan, Saqla and NavbatUz.
+    </p>
+    <h2>Why this site exists</h2>
+    <p>
+      Most interview advice is vague. I write up every interview I go through after the
+      process ends: the stages, what they tested, where I struggled and what I'd prepare
+      differently. I also keep notes on what I learn, written so that someone a year
+      behind me can follow them.
+    </p>
+    <h2>Get in touch</h2>
+    <p>
+      {SITE.links.linkedin
+        ? <span>The easiest way is <a href={SITE.links.linkedin}>LinkedIn</a>.</span>
+        : <span>The easiest way is <a href={SITE.links.github}>GitHub</a>.</span>}
+      {SITE.email && <span> Or email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</span>}
+      {SITE.resume && <span> My resume is <a href={SITE.resume}>here</a>.</span>}
+    </p>
+  </div>
+</Base>
+
+<style>
+  .page-title { font-size: clamp(2.2rem, 6vw, 3rem); margin: 2rem 0 2rem; }
+</style>

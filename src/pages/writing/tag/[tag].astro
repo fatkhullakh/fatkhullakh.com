@@ -1,0 +1,39 @@
+---
+import Base from "../../../layouts/Base.astro";
+import PostList from "../../../components/PostList.astro";
+import TagFilter from "../../../components/TagFilter.astro";
+import { getPosts, groupByYear } from "../../../lib/posts";
+import { TAGS, type Tag } from "../../../config";
+
+export function getStaticPaths() {
+  return Object.keys(TAGS).map((tag) => ({ params: { tag } }));
+}
+
+const tag = Astro.params.tag as Tag;
+const posts = (await getPosts()).filter((p) => p.data.tag === tag);
+const years = groupByYear(posts);
+const blurbs: Record<Tag, string> = {
+  interviews: "Every interview I go through, written up after the process ends.",
+  notes: "Things I learned and wanted to explain properly.",
+  projects: "Write-ups of things I built.",
+};
+---
+<Base title={TAGS[tag]} description={blurbs[tag]}>
+  <h1 class="page-title">{TAGS[tag]}</h1>
+  <p class="muted blurb">{blurbs[tag]}</p>
+  <TagFilter active={tag} />
+  {years.length === 0 && <p class="muted empty">Nothing here yet.</p>}
+  {years.map(([year, list]) => (
+    <section class="year">
+      <h2 class="section-title">{year}</h2>
+      <PostList posts={list} showYear={false} showTag={false} />
+    </section>
+  ))}
+</Base>
+
+<style>
+  .page-title { font-size: clamp(2.2rem, 6vw, 3rem); margin: 2rem 0 0.5rem; }
+  .blurb { margin: 0 0 1.25rem; }
+  .year { margin-top: 2.75rem; }
+  .empty { margin-top: 2rem; }
+</style>

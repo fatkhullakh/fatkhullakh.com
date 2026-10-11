@@ -1,0 +1,25 @@
+---
+import Base from "../../layouts/Base.astro";
+import PostList from "../../components/PostList.astro";
+import TagFilter from "../../components/TagFilter.astro";
+import { getPosts, groupByYear } from "../../lib/posts";
+
+const posts = await getPosts();
+const years = groupByYear(posts);
+---
+<Base title="Writing" description="Essays, interview write-ups and notes on data engineering.">
+  <h1 class="page-title">Writing</h1>
+  <TagFilter active="all" />
+  {years.length === 0 && <p class="muted">Nothing published yet.</p>}
+  {years.map(([year, list]) => (
+    <section class="year">
+      <h2 class="section-title">{year}</h2>
+      <PostList posts={list} showYear={false} />
+    </section>
+  ))}
+</Base>
+
+<style>
+  .page-title { font-size: clamp(2.2rem, 6vw, 3rem); margin: 2rem 0 1.25rem; }
+  .year { margin-top: 2.75rem; }
+</style>

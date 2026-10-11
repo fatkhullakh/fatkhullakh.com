@@ -1,0 +1,74 @@
+---
+import Base from "../layouts/Base.astro";
+import PostList from "../components/PostList.astro";
+import { getPosts } from "../lib/posts";
+import { projects } from "../data/projects";
+import { SITE } from "../config";
+
+const posts = (await getPosts()).slice(0, 6);
+---
+<Base>
+  <section class="hero">
+    <h1>Hi, I'm {SITE.name}.</h1>
+    <p class="lede">
+      I'm a data engineer in Gdańsk. I write down what I learn on the job, and every
+      interview I go through: what they asked, what I got wrong, and what I'd do differently.
+    </p>
+    <p class="meta muted">{SITE.location}</p>
+  </section>
+
+  <section class="block">
+    <h2 class="section-title">
+      Writing
+      {posts.length > 0 && <a href="/writing">All writing</a>}
+    </h2>
+    {posts.length > 0
+      ? <PostList posts={posts} />
+      : <p class="muted">The first essay is on its way.</p>}
+  </section>
+
+  <section class="block">
+    <h2 class="section-title">
+      Projects
+      <a href="/projects">Details</a>
+    </h2>
+    <ul class="projects">
+      {projects.map((p) => (
+        <li>
+          {p.url ? <a href={p.url} class="pname">{p.name}</a> : <span class="pname">{p.name}</span>}
+          <span class="muted">{p.kind}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: 3.5rem 0 4rem; }
+  h1 {
+    font-size: clamp(2.6rem, 8vw, 4.2rem);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+  }
+  .lede {
+    font-family: var(--serif);
+    font-size: clamp(1.25rem, 3vw, 1.45rem);
+    line-height: 1.5;
+    margin: 1.5rem 0 0;
+    max-width: 36rem;
+  }
+  .meta { margin: 1.25rem 0 0; font-size: 0.95rem; }
+  .block + .block { margin-top: 3.5rem; }
+  .projects { list-style: none; padding: 0; margin: 0; }
+  .projects li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .projects li:first-child { border-top: 1px solid var(--line); }
+  .pname { font-family: var(--serif); font-size: 1.2rem; text-decoration: none; }
+  .projects .muted { font-size: 0.9rem; text-align: right; }
+</style>
