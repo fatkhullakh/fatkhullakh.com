@@ -10,6 +10,7 @@ const posts = (await getPosts()).slice(0, 6);
 <Base>
   <section class="hero">
     <h1>Hi, I'm {SITE.name}.</h1>
+    <p class="fullname muted">{SITE.fullName}</p>
     <p class="lede">
       I'm a data engineer in Gdańsk. I write down what I learn on the job, and every
       interview I go through: what they asked, what I got wrong, and what I'd do differently.
@@ -50,6 +51,7 @@ const posts = (await getPosts()).slice(0, 6);
     font-weight: 400;
     letter-spacing: -0.025em;
   }
+  .fullname { margin: 0.75rem 0 0; font-size: 1rem; }
   .lede {
     font-family: var(--serif);
     font-size: clamp(1.25rem, 3vw, 1.45rem);

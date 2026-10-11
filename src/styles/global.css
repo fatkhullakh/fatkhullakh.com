@@ -2,15 +2,15 @@
 @import "@fontsource-variable/newsreader/wght-italic.css";
 @import "@fontsource-variable/schibsted-grotesk";
 
-/* Palette: night indigo with Samarkand tile turquoise */
+/* Palette: ink black with Samarkand tile turquoise */
 :root {
-  --bg: #0e1322;
-  --bg-raised: #151c2e;
-  --line: #252e45;
-  --text: #e8e3d5;
-  --muted: #959db0;
+  --bg: #050608;
+  --bg-raised: #101318;
+  --line: #20242c;
+  --text: #ebe7de;
+  --muted: #8d939e;
   --accent: #4fc1b6;
-  --accent-soft: rgba(79, 193, 182, 0.12);
+  --accent-soft: rgba(79, 193, 182, 0.1);
 
   --serif: "Newsreader Variable", Georgia, serif;
   --sans: "Schibsted Grotesk Variable", system-ui, sans-serif;

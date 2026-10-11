@@ -30,17 +30,21 @@ Images: put them in `public/images/` and use `![alt text](/images/file.png)`.
 - `src/pages/about.astro`: rewrite the about text in your own words
 - Put your CV in `public/resume.pdf`, or set `resume: ""` in the config to hide the link
 
-## Put it online (free)
+## Put it online (free, Cloudflare Pages)
 
-1. Create a GitHub repo and push this folder:
+No backend, no database, no server to pay for. The site is plain HTML files built from your markdown.
+
+1. Create an empty GitHub repo (for example `fatkhullakh/fatkhullakh.com`) and push this folder:
    ```bash
    git remote add origin https://github.com/fatkhullakh/fatkhullakh.com.git
    git push -u origin main
    ```
-2. Go to vercel.com, sign in with GitHub, "Add New Project", pick the repo. It detects Astro on its own. Click Deploy.
-3. In the Vercel project: Settings > Domains > add `fatkhullakh.com` and `www.fatkhullakh.com`. Vercel shows the DNS records to add at the place you bought the domain. Usually an `A` record for `@` and a `CNAME` for `www`.
+2. Cloudflare dashboard > Workers & Pages > Create > Pages > Connect to Git. Pick the repo.
+3. Build settings: framework preset `Astro`, build command `npm run build`, output directory `dist`. Deploy.
+4. In the Pages project: Custom domains > add `fatkhullakh.com`, then `www.fatkhullakh.com`. The domain is already on Cloudflare, so DNS is set up for you.
+5. Email: your domain > Email > Email Routing. Create `hello@fatkhullakh.com` and forward it to your Gmail. Free.
 
-Cloudflare Pages or Netlify work the same way if you prefer them.
+After that, every `git push` rebuilds the site in about a minute.
 
 ## Structure
 

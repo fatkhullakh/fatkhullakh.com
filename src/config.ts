@@ -1,14 +1,14 @@
 // Edit this file to change your name, bio and links everywhere on the site.
 
 export const SITE = {
-  name: "Fatih",
-  fullName: "Fatih", // TODO: add your surname exactly as you want it shown
+  name: "Fatz",
+  fullName: "Fatkhullakh Turakhonov",
   url: "https://fatkhullakh.com",
-  title: "Fatih",
+  title: "Fatkhullakh Turakhonov",
   description:
     "Data engineer in Gdańsk. Notes on what I learn, and honest write-ups of the interviews I go through.",
-  location: "Gdańsk, sometimes Tashkent",
-  email: "", // TODO: public contact email, leave empty to hide
+  location: "Based in Gdańsk, Poland. Originally from Uzbekistan.",
+  email: "hello@fatkhullakh.com", // turn on Cloudflare Email Routing so this forwards to your inbox
   links: {
     github: "https://github.com/fatkhullakh",
     linkedin: "", // TODO: your LinkedIn URL
