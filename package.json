@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro build && wrangler pages dev dist",
+    "db:setup:local": "wrangler d1 migrations apply fatkhullakh-db --local",
+    "db:setup:live": "wrangler d1 migrations apply fatkhullakh-db --remote",
     "astro": "astro"
   },
   "dependencies": {
@@ -16,5 +18,8 @@
     "astro": "^7.3.8"
   },
   "type": "module",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "wrangler": "^3.114.17"
+  }
 }

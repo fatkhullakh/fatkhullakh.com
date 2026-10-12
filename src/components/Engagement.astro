@@ -1,0 +1,346 @@
+---
+// Like button, share links and comments for a post.
+// Data lives in the Cloudflare D1 database behind /api (see /functions).
+import Share from "./Share.astro";
+
+interface Props { slug: string; title: string; url: string }
+const { slug, title, url } = Astro.props;
+---
+<section class="engage" data-engage data-slug={slug}>
+  <div class="actions">
+    <button type="button" class="like" data-like aria-pressed="false">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.5 4.5 7 4.5c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.5 0 5.6 3.5 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z" />
+      </svg>
+      <span data-like-label>like</span>
+      <span class="count" data-like-count></span>
+    </button>
+    <Share title={title} url={url} />
+  </div>
+
+  <div class="comments">
+    <h2 class="section-title">
+      <span>comments <span data-comment-count></span></span>
+    </h2>
+
+    <form class="form" data-form novalidate>
+      <input class="name" name="name" placeholder="Your name" maxlength="40" autocomplete="nickname" aria-label="Your name" />
+      <textarea name="body" rows="3" placeholder="Leave a comment. Corrections and questions welcome." maxlength="2000" aria-label="Comment"></textarea>
+      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <div class="row">
+        <span class="status" data-status role="status"></span>
+        <button type="submit" class="submit">post comment</button>
+      </div>
+    </form>
+
+    <ol class="list" data-list></ol>
+    <p class="empty" data-empty hidden>No comments yet. Be the first.</p>
+  </div>
+
+  <template data-comment-tpl>
+    <li class="comment">
+      <div class="head">
+        <span class="who"></span>
+        <span class="badge" hidden>author</span>
+        <time></time>
+      </div>
+      <p class="text"></p>
+      <div class="tools">
+        <button type="button" class="reply">reply</button>
+        <button type="button" class="delete" hidden>delete</button>
+      </div>
+      <ol class="replies"></ol>
+    </li>
+  </template>
+</section>
+
+<script>
+  type Comment = { id: number; parentId: number | null; name: string; body: string; isAuthor: boolean; createdAt: string };
+
+  const root = document.querySelector<HTMLElement>("[data-engage]");
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const slug = root.dataset.slug!;
+    const store = {
+      get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
+      set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} },
+    };
+
+    // ?admin=KEY once on any page saves your key in this browser
+    const params = new URLSearchParams(location.search);
+    if (params.get("admin")) {
+      store.set("fk-admin", params.get("admin")!);
+      params.delete("admin");
+      history.replaceState(null, "", location.pathname + (params.toString() ? `?${params}` : "") + location.hash);
+    }
+    const adminKey = store.get("fk-admin");
+
+    const api = async (path: string, init: RequestInit = {}) => {
+      const headers: Record<string, string> = { "content-type": "application/json" };
+      if (adminKey) headers["x-admin-key"] = adminKey;
+      const res = await fetch(`/api/${path}`, { ...init, headers });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Something went wrong. Try again.");
+      return data;
+    };
+
+    // ---------- reads and likes ----------
+    const likeBtn = root.querySelector<HTMLButtonElement>("[data-like]")!;
+    const likeCount = root.querySelector<HTMLElement>("[data-like-count]")!;
+    const likeLabel = root.querySelector<HTMLElement>("[data-like-label]")!;
+    const reads = document.querySelector<HTMLElement>("[data-reads]");
+
+    function showStats(s: { views: number; likes: number; liked: boolean }) {
+      likeCount.textContent = s.likes > 0 ? String(s.likes) : "";
+      likeBtn.setAttribute("aria-pressed", String(s.liked));
+      likeLabel.textContent = s.liked ? "liked" : "like";
+      if (reads && s.views > 0) {
+        reads.textContent = `${s.views.toLocaleString("en")} ${s.views === 1 ? "read" : "reads"}`;
+        reads.hidden = false;
+      }
+    }
+
+    const viewKey = `fk-view:${slug}`;
+    const lastView = Number(store.get(viewKey) || 0);
+    const countView = Date.now() - lastView > 12 * 3600 * 1000; // one read per reader per 12 hours
+    (countView
+      ? api("stats", { method: "POST", body: JSON.stringify({ slug, action: "view" }) })
+      : api(`stats?slug=${slug}`)
+    )
+      .then((s) => { if (countView) store.set(viewKey, String(Date.now())); showStats(s); })
+      .catch(() => { likeBtn.hidden = true; });
+
+    likeBtn.addEventListener("click", async () => {
+      const liked = likeBtn.getAttribute("aria-pressed") === "true";
+      likeBtn.disabled = true;
+      try {
+        showStats(await api("stats", { method: "POST", body: JSON.stringify({ slug, action: liked ? "unlike" : "like" }) }));
+      } catch {}
+      likeBtn.disabled = false;
+    });
+
+    // ---------- comments ----------
+    const list = root.querySelector<HTMLOListElement>("[data-list]")!;
+    const empty = root.querySelector<HTMLElement>("[data-empty]")!;
+    const countEl = root.querySelector<HTMLElement>("[data-comment-count]")!;
+    const tpl = root.querySelector<HTMLTemplateElement>("[data-comment-tpl]")!;
+    const mainForm = root.querySelector<HTMLFormElement>("[data-form]")!;
+    let total = 0;
+
+    const when = (iso: string) => {
+      const d = new Date(iso);
+      const mins = Math.round((Date.now() - d.valueOf()) / 60000);
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      if (mins < 1) return "just now";
+      if (mins < 60) return rtf.format(-mins, "minute");
+      if (mins < 60 * 24) return rtf.format(-Math.round(mins / 60), "hour");
+      if (mins < 60 * 24 * 30) return rtf.format(-Math.round(mins / 1440), "day");
+      return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    };
+
+    function setCount(n: number) {
+      total = n;
+      countEl.textContent = n > 0 ? `(${n})` : "";
+      empty.hidden = n > 0;
+    }
+
+    function render(c: Comment): HTMLLIElement {
+      const li = tpl.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+      li.dataset.id = String(c.id);
+      li.querySelector(".who")!.textContent = c.name;
+      li.querySelector<HTMLElement>(".badge")!.hidden = !c.isAuthor;
+      const t = li.querySelector("time")!;
+      t.dateTime = c.createdAt;
+      t.textContent = when(c.createdAt);
+      li.querySelector(".text")!.textContent = c.body;
+      if (c.parentId) li.classList.add("is-reply");
+
+      li.querySelector<HTMLButtonElement>(".reply")!.addEventListener("click", () => openReply(c.parentId ?? c.id, c.name));
+      const del = li.querySelector<HTMLButtonElement>(".delete")!;
+      del.hidden = !adminKey;
+      del.addEventListener("click", async () => {
+        if (!confirm("Delete this comment and its replies?")) return;
+        try {
+          await api(`comments?id=${c.id}`, { method: "DELETE" });
+          const removed = 1 + li.querySelectorAll(".replies > li").length;
+          li.remove();
+          setCount(total - removed);
+        } catch (e) { alert((e as Error).message); }
+      });
+      return li;
+    }
+
+    function place(c: Comment) {
+      const li = render(c);
+      if (c.parentId) {
+        const parent = list.querySelector<HTMLElement>(`li[data-id="${c.parentId}"] > .replies`);
+        (parent ?? list).appendChild(li);
+      } else {
+        list.appendChild(li);
+      }
+      return li;
+    }
+
+    api(`comments?slug=${slug}`)
+      .then(({ comments }: { comments: Comment[] }) => {
+        comments.filter((c) => !c.parentId).forEach(place);
+        comments.filter((c) => c.parentId).forEach(place);
+        setCount(comments.length);
+      })
+      .catch(() => {
+        empty.hidden = false;
+        empty.textContent = "Comments couldn't load right now.";
+      });
+
+    // remember the commenter's name
+    const savedName = store.get("fk-name");
+    if (savedName) mainForm.querySelector<HTMLInputElement>(".name")!.value = savedName;
+
+    function wire(form: HTMLFormElement, parentId: number | null, onDone?: () => void) {
+      const status = form.querySelector<HTMLElement>("[data-status]")!;
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const name = String(fd.get("name") || "").trim();
+        const body = String(fd.get("body") || "").trim();
+        if (!name) { status.textContent = "Add a name, any name works."; return; }
+        if (!body) { status.textContent = "The comment is empty."; return; }
+        const btn = form.querySelector<HTMLButtonElement>(".submit")!;
+        btn.disabled = true;
+        status.textContent = "posting...";
+        try {
+          const { comment } = await api("comments", {
+            method: "POST",
+            body: JSON.stringify({ slug, name, body, parentId, website: fd.get("website") }),
+          });
+          store.set("fk-name", name);
+          form.querySelector<HTMLTextAreaElement>("textarea")!.value = "";
+          status.textContent = "";
+          if (comment) {
+            const li = place(comment);
+            setCount(total + 1);
+            li.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }
+          onDone?.();
+        } catch (err) {
+          status.textContent = (err as Error).message;
+        }
+        btn.disabled = false;
+      });
+    }
+    wire(mainForm, null);
+
+    let openForm: HTMLFormElement | null = null;
+    function openReply(threadId: number, toName: string) {
+      openForm?.remove();
+      const thread = list.querySelector<HTMLElement>(`li[data-id="${threadId}"]`);
+      if (!thread) return;
+      const form = mainForm.cloneNode(true) as HTMLFormElement;
+      form.classList.add("reply-form");
+      form.removeAttribute("data-form");
+      form.querySelector<HTMLInputElement>(".name")!.value = store.get("fk-name") || "";
+      const ta = form.querySelector<HTMLTextAreaElement>("textarea")!;
+      ta.value = "";
+      ta.placeholder = `Reply to ${toName}`;
+      const cancel = document.createElement("button");
+      cancel.type = "button";
+      cancel.className = "cancel";
+      cancel.textContent = "cancel";
+      cancel.addEventListener("click", () => { form.remove(); openForm = null; });
+      form.querySelector(".row")!.insertBefore(cancel, form.querySelector(".submit"));
+      thread.appendChild(form);
+      openForm = form;
+      wire(form, threadId, () => { form.remove(); openForm = null; });
+      ta.focus();
+    }
+  }
+</script>
+
+<style>
+  .engage { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; }
+
+  .like {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .like svg { fill: none; stroke: currentColor; stroke-width: 1.8; transition: fill 0.15s, transform 0.2s; }
+  .like:hover { border-color: var(--accent); color: var(--accent); }
+  .like[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .like[aria-pressed="true"] svg { fill: currentColor; transform: scale(1.1); }
+  .like .count:empty { display: none; }
+  .like .count { color: var(--muted); }
+
+  .comments { margin-top: 3.5rem; }
+
+  .form { display: grid; gap: 0.6rem; }
+  .form input, .form textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 0.98rem;
+    color: var(--text);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.65rem 0.8rem;
+    transition: border-color 0.15s;
+  }
+  .form .name { max-width: 16rem; }
+  .form textarea { resize: vertical; min-height: 5.5rem; line-height: 1.55; }
+  .form input:focus, .form textarea:focus { outline: none; border-color: var(--accent); }
+  .form ::placeholder { color: var(--muted); }
+  .hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .row { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; }
+  .status { margin-right: auto; font-size: 0.85rem; color: var(--muted); }
+  .submit, :global(.cancel) {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    border-radius: 6px;
+    padding: 0.5rem 0.95rem;
+    cursor: pointer;
+  }
+  .submit { background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent); }
+  .submit:disabled { opacity: 0.6; cursor: default; }
+  :global(.cancel) { background: none; border: 1px solid var(--line); color: var(--muted); }
+
+  .list { list-style: none; padding: 0; margin: 2.25rem 0 0; }
+  .empty { color: var(--muted); margin-top: 2rem; }
+  :global(.comment) { padding: 1.25rem 0; border-top: 1px solid var(--line); }
+  :global(.comment.is-reply) { border-top: 0; padding: 1rem 0 0 1.1rem; border-left: 2px solid var(--line); margin-top: 0.75rem; }
+  :global(.comment .head) { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.35rem 0.75rem; }
+  :global(.comment .who) { font-weight: 600; }
+  :global(.comment .badge) {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 0 0.35rem;
+  }
+  :global(.comment time) { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  :global(.comment .text) { margin: 0.4rem 0 0; color: var(--body); white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; }
+  :global(.comment .tools) { display: flex; gap: 1rem; margin-top: 0.5rem; }
+  :global(.comment .tools button) {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  :global(.comment .tools button:hover) { color: var(--accent); }
+  :global(.comment .replies) { list-style: none; padding: 0; margin: 0; }
+  :global(.comment .reply-form) { margin-top: 1rem; padding-left: 1.1rem; border-left: 2px solid var(--accent); }
+</style>

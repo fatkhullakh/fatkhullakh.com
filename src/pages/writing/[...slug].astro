@@ -3,8 +3,7 @@ import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { getPosts, formatDate, readingTime, type Post } from "../../lib/posts";
 import { TAGS, SITE } from "../../config";
-import Share from "../../components/Share.astro";
-import Comments from "../../components/Comments.astro";
+import Engagement from "../../components/Engagement.astro";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -23,11 +22,12 @@ const facts = [
 <Base title={d.title} description={d.description} type="article">
   <article>
     <header class="post-head">
-      <a href="/writing" class="back-top">← all writing</a>
+      <a href="/writing" class="back-top">← back to all writing</a>
       <p class="meta">
         <a href={`/writing/tag/${d.tag}`}>{TAGS[d.tag].toLowerCase()}</a>
         <span>{formatDate(d.date)}</span>
         <span>{readingTime(post.body)} min read</span>
+        <span data-reads hidden></span>
       </p>
       <h1>{d.title}</h1>
       <p class="desc">{d.description}</p>
@@ -42,11 +42,7 @@ const facts = [
     <div class="prose">
       <Content />
     </div>
-    <footer class="post-foot">
-      <Share title={d.title} url={new URL(`/writing/${post.id}`, SITE.url).href} />
-      <Comments />
-      <p class="back"><a href="/writing" class="cmd">← back to all writing</a></p>
-    </footer>
+    <Engagement slug={post.id} title={d.title} url={new URL(`/writing/${post.id}`, SITE.url).href} />
   </article>
 </Base>
 
@@ -86,6 +82,5 @@ const facts = [
     margin-bottom: 2.25rem;
   }
   .back-top:hover { color: var(--accent); }
-  .post-foot { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line); }
-  .back { margin-top: 3.5rem; }
+
 </style>

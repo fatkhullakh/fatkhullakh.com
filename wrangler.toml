@@ -1,0 +1,10 @@
+# Cloudflare Pages settings. The database stores reads, likes and comments.
+name = "fatkhullakh-com"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fatkhullakh-db"
+database_id = "REPLACE_WITH_YOUR_DATABASE_ID" # from `npx wrangler d1 create fatkhullakh-db`
+migrations_dir = "migrations"

@@ -1,117 +1,162 @@
 # fatkhullakh.com
 
-My personal site: writing, projects, about. Built with Astro. No backend, no database. Every post is one markdown file.
+My site: writing, projects, about. Built with Astro and hosted free on Cloudflare.
+Posts are markdown files. Reads, likes and comments live in a small free Cloudflare database (D1).
 
-## 1. Run it on your laptop (one time setup)
+---
 
-1. Install **Node.js 22 LTS** from nodejs.org and **Git** from git-scm.com.
-2. Unzip this folder, open a terminal inside it, and run:
-   ```bash
-   npm install
-   npm run dev
-   ```
-3. Open http://localhost:4321. Every time you save a file, the page refreshes by itself.
+## 1. Run it on your laptop
 
-Drafts (`draft: true`) show up here with a "draft" label. They never appear on the live site.
+One time: install **Node.js 22 LTS** (nodejs.org) and **Git** (git-scm.com). Then, in a terminal inside this folder:
 
-## 2. Put it online (one time setup, about 15 minutes)
+```bash
+npm install
+```
 
-**GitHub**
-1. On github.com, create a new empty repository called `fatkhullakh.com`. No README, no .gitignore.
-2. In the terminal, inside this folder:
+**For writing and design** (fast, refreshes as you type):
+```bash
+npm run dev
+```
+Open http://localhost:4321. Drafts show here with a "draft" label. Likes and comments don't load in this mode.
+
+**To test likes and comments too** (one time setup, then just `npm run preview`):
+```bash
+copy .dev.vars.example .dev.vars      # Mac/Linux: cp .dev.vars.example .dev.vars
+npm run db:setup:local
+npm run preview
+```
+Open http://localhost:8788. This is a full copy of the live site with its own local database.
+
+---
+
+## 2. Put it online (one time, about 20 minutes)
+
+**a. GitHub**
+1. On github.com create an empty repo `fatkhullakh.com` (no README).
+2. In this folder:
    ```bash
    git remote add origin https://github.com/fatkhullakh/fatkhullakh.com.git
    git branch -M main
    git push -u origin main
    ```
 
-**Cloudflare Pages**
-3. Cloudflare dashboard > **Workers & Pages** > **Create application** > **Pages** tab > **Import an existing Git repository**.
-4. Connect GitHub, pick the `fatkhullakh.com` repo.
-5. Build settings: production branch `main`, build command `npm run build`, build output directory `dist`.
-6. **Save and Deploy**. After a minute it's live at `something.pages.dev`.
+**b. The database**
+```bash
+npx wrangler login                        # opens the browser, log in to Cloudflare
+npx wrangler d1 create fatkhullakh-db     # prints a database_id
+```
+Paste that `database_id` into `wrangler.toml` (replace `REPLACE_WITH_YOUR_DATABASE_ID`), then:
+```bash
+npm run db:setup:live
+git add . && git commit -m "Add database id" && git push
+```
 
-**Your domain**
-7. In the Pages project: **Custom domains** > **Set up a custom domain** > `fatkhullakh.com`. Repeat for `www.fatkhullakh.com`. The domain is already on Cloudflare, so it configures DNS for you.
+**c. Cloudflare Pages**
+1. Cloudflare dashboard > **Workers & Pages** > **Create application** > **Pages** tab > **Import an existing Git repository** > pick `fatkhullakh.com`.
+2. Build settings: branch `main`, build command `npm run build`, output directory `dist`. **Save and Deploy**.
+3. In the project: **Settings** > **Variables and Secrets** > add two, type **Secret**:
+   - `ADMIN_KEY`: a long password only you know. It lets you reply as the author and delete comments.
+   - `HASH_SALT`: any random text. It keeps reader ids anonymous.
+4. **Deployments** > the latest one > **Retry deployment**, so the secrets apply.
 
-From now on, every push to `main` updates the live site automatically.
+**d. Your domain**
+In the Pages project: **Custom domains** > **Set up a custom domain** > `fatkhullakh.com`, then again for `www.fatkhullakh.com`.
+
+From now on, every `git push` updates the live site in about a minute.
+
+---
 
 ## 3. Publish a new post
 
-**Option A, from your laptop**
-1. Copy `src/content/writing/interview-template.md` (or `note-template.md`).
-2. Rename it. The file name becomes the URL:
+1. Copy `src/content/writing/interview-template.md` (or `note-template.md` for a learning note).
+2. Rename it. The file name becomes the address:
    `fresha-analytics-engineer.md` becomes `fatkhullakh.com/writing/fresha-analytics-engineer`.
-   Lowercase, words joined with `-`.
-3. Edit the top block:
+   Use lowercase and dashes. **Don't rename a post after publishing**, its reads, likes and comments are tied to the name.
+3. Fill in the top block:
    ```yaml
    title: "Fresha, Analytics Engineer: where my SQL broke"
    description: "One sentence on what the reader learns."
    date: 2026-10-12
    tag: interviews        # interviews, notes or projects
    draft: false           # true = only visible on your laptop
-   company: "Fresha"      # interview posts only
+   company: "Fresha"      # interview posts only, shown in a box under the title
    role: "Analytics Engineer"
    outcome: "Rejected after the SQL round"
    ```
-4. Write the post below it in markdown. Check it at localhost:4321.
-5. Publish:
+4. Write below it in markdown, check it with `npm run dev`, then:
    ```bash
    git add .
    git commit -m "New post: Fresha interview"
    git push
    ```
 
-**Option B, no laptop setup needed**
-Go to the repo on github.com > `src/content/writing` > **Add file** > **Create new file**. Paste the post, click **Commit changes**. The site updates in about a minute.
+No laptop? On github.com open `src/content/writing` > **Add file** > **Create new file**, paste the post, **Commit changes**.
 
-**Images and diagrams**
-Draw in excalidraw.com, export as PNG, put it in `public/images/`, then in the post:
-`![What the diagram shows](/images/my-diagram.png)`
+**Images and diagrams:** draw in excalidraw.com, export PNG into `public/images/`, then in the post: `![What it shows](/images/my-diagram.png)`
 
-**Markdown basics**
-`## Heading`, `**bold**`, `*italic*`, `- list item`, `[link text](https://...)`, and code blocks with three backticks plus the language (` ```sql `).
+**Markdown basics:** `## Heading`, `**bold**`, `*italic*`, `- list item`, `[link text](https://...)`, code blocks with three backticks and the language (` ```sql `).
 
-## Things to edit once
+---
 
-- `src/config.ts`: LinkedIn link, the rotating "I write about..." lines, giscus IDs
-- `src/data/projects.ts`: which projects show, in which order
-- `src/pages/about.astro`: the about text
+## 4. Edit the other pages
 
-## Projects
+| What | Where |
+|---|---|
+| Projects (which ones, in what order) | `src/data/projects.ts` |
+| About page text | `src/pages/about.astro` |
+| Home page text under your name | `src/pages/index.astro` |
+| The rotating "I write about..." lines, email, LinkedIn, city | `src/config.ts` |
+| Colors and fonts | `src/styles/global.css` |
 
-Only what's listed in `src/data/projects.ts` appears, in that order.
-For a GitHub repo, one line is enough: `{ repo: "cdc-correctness-lab", kind: "open source" }`.
-The name, description, language, stars and link come from GitHub when the site builds, so give the repo a good description on GitHub (the "About" box on the repo page).
-If a listed repo is private or misspelled, it's skipped and the build tells you.
-If builds ever fail to reach GitHub, add a `GITHUB_TOKEN` environment variable in the Cloudflare Pages settings.
+**Projects:** only what's listed in `src/data/projects.ts` shows. For a GitHub repo one line is enough:
+```ts
+{ repo: "cdc-correctness-lab", kind: "open source" },
+```
+Name, description, language and stars come from GitHub at build time, so write a good description in the repo's "About" box on GitHub. For anything else give `name`, `kind`, `summary` and optionally `url` and `tags`. A listed repo that's private or misspelled is skipped.
 
-## Likes and comments (giscus)
+**Text with a link in it:** in `.astro` files, keep the text and the link on the same line, or add `{" "}` before the link. Otherwise the space disappears and you get "contact me attfatkh@gmail.com".
 
-Likes and comments under each post are stored as GitHub Discussions in your site repo, for free. Readers sign in with GitHub to react or comment, which suits a developer audience and keeps spam away.
+---
 
-1. The `fatkhullakh.com` repo must be public. Repo > Settings > General > Features: tick **Discussions**.
-2. Install the giscus app on that repo: github.com/apps/giscus > Install > only select repositories > `fatkhullakh.com`.
-3. Repo > Discussions > categories (pencil icon) > new category called `Comments`, format **Announcement** (so only giscus can start threads).
-4. Open giscus.app, type `fatkhullakh/fatkhullakh.com` in the repository box, pick the `Comments` category.
-5. In the script it generates, copy `data-repo-id` and `data-category-id` into `giscus` in `src/config.ts`. Push.
+## 5. Likes, reads and comments
 
-Each post then shows reactions (the likes) and a comment box. Until the IDs are filled in, that section stays hidden.
+- **Reads:** shown next to the date. One read per reader per post every 12 hours.
+- **Like:** one per reader, tap again to undo.
+- **Comments:** any name, no login. Replies are one level deep, so threads stay simple.
+- **Spam protection:** a hidden trap field for bots, max 5 comments per person per 10 minutes, 2000 characters max.
 
-## RSS
+**Reply as the author and moderate:** open any post once with your key in the address:
+`fatkhullakh.com/writing/some-post?admin=YOUR_ADMIN_KEY`
+Your browser remembers it. From then on your comments get an "author" badge and every comment shows a **delete** button (only to you). Do this only on your own devices.
 
-`/rss.xml` is a feed of your posts. People who use a feed reader (Feedly, Inoreader) can follow the blog and get new posts automatically. It's linked quietly in the footer.
+**See everything in the database:** Cloudflare dashboard > **Storage & Databases** > **D1** > `fatkhullakh-db` > **Console**, for example:
+```sql
+SELECT slug, views FROM post_views ORDER BY views DESC;
+SELECT * FROM comments ORDER BY created_at DESC LIMIT 20;
+```
+
+All of this fits in Cloudflare's free tier by a wide margin.
+
+---
+
+## 6. RSS
+
+`/rss.xml` is a feed of your posts. People using a feed reader (Feedly, Inoreader) get new posts automatically. It's linked in the footer.
+
+---
 
 ## Where things live
 
 ```
 src/
-  config.ts            name, links, rotating lines
-  content/writing/     all posts (markdown)
-  data/projects.ts     project list
-  pages/               home, writing, projects, about, rss
-  components/          sidebar, theme switch, lists
-  styles/global.css    colors (dark and light) and fonts
+  config.ts             name, links, rotating lines
+  content/writing/      all posts (markdown)
+  data/projects.ts      project list
+  pages/                home, writing, projects, about, rss
+  components/           sidebar, background, like/comments, share
+  styles/global.css     colors and fonts
+functions/api/          the backend: stats.ts (reads, likes), comments.ts
+server/shared.ts        helpers for the backend
+migrations/             database tables
+wrangler.toml           Cloudflare settings and database id
 ```
-
-You also get `/rss.xml` and a sitemap for Google automatically.
