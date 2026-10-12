@@ -20,13 +20,13 @@ export const projects: Project[] = [
   { repo: "cdc-correctness-lab", kind: "open source" },
   {
     name: "Saqla",
-    kind: "product, co-founded",
+    kind: "product",
     summary: "A food rescue marketplace connecting shops with leftover food to people who buy it at a discount.",
     tags: ["AWS", "Payme", "Click"],
   },
   {
     name: "NavbatUz",
-    kind: "product, co-founded",
+    kind: "product",
     summary: "A booking platform for local services.",
   },
 ];
