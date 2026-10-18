@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { getEntry } from "astro:content";
 import { SITE } from "../config";
 import { projects, type Project } from "../data/projects";
 
@@ -18,6 +19,7 @@ export interface ResolvedProject {
   url: string;
   tags: string[];
   stars: number;
+  detail: boolean; // true when the card opens its own page
 }
 
 // Runs at build time, so GitHub details refresh every time the site deploys.
@@ -65,22 +67,34 @@ async function resolve(list: Project[]): Promise<ResolvedProject[]> {
   const repos = needsGithub ? await fetchRepos() : null;
   const out: ResolvedProject[] = [];
   for (const p of list) {
+    // A project with a `slug` has its own page, written in src/content/projects/<slug>.md
+    const md = p.slug ? await getEntry("projects", p.slug) : undefined;
+    const page = md ? `/projects/${p.slug}` : "";
     if (!p.repo) {
-      out.push({ name: p.name ?? "", kind: p.kind, summary: p.summary ?? "", url: p.url ?? "", tags: p.tags ?? [], stars: 0 });
+      out.push({
+        name: p.name ?? md?.data.title ?? "",
+        kind: p.kind,
+        summary: p.summary ?? md?.data.summary ?? "",
+        url: page || p.url || "",
+        tags: p.tags ?? md?.data.stack.slice(0, 3) ?? [],
+        stars: 0,
+        detail: Boolean(md),
+      });
       continue;
     }
     const r = repos?.get(p.repo.toLowerCase());
-    if (repos && !r) {
+    if (repos && !r && !md) {
       console.warn(`[projects] Repo "${p.repo}" not found on GitHub (private or misspelled), skipping it.`);
       continue;
     }
     out.push({
-      name: p.name ?? r?.name ?? p.repo,
+      name: p.name ?? md?.data.title ?? r?.name ?? p.repo,
       kind: p.kind,
-      summary: p.summary ?? r?.description ?? "",
-      url: p.url || r?.url || `https://github.com/${SITE.github}/${p.repo}`,
-      tags: p.tags ?? (r?.language ? [r.language] : []),
+      summary: p.summary ?? md?.data.summary ?? r?.description ?? "",
+      url: page || p.url || r?.url || `https://github.com/${SITE.github}/${p.repo}`,
+      tags: p.tags ?? md?.data.stack.slice(0, 3) ?? (r?.language ? [r.language] : []),
       stars: r?.stars ?? 0,
+      detail: Boolean(md),
     });
   }
   return out;

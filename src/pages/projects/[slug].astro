@@ -1,0 +1,82 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects");
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const facts = [
+  d.status && { label: "Status", value: d.status },
+  d.role && { label: "My role", value: d.role },
+  d.stack.length > 0 && { label: "Stack", value: d.stack.join(", ") },
+].filter(Boolean) as { label: string; value: string }[];
+---
+<Base title={d.title} description={d.summary} type="article" centered>
+  <article>
+    <header class="head">
+      <a href="/projects" class="back-top">← back to projects</a>
+      <h1>{d.title}</h1>
+      <p class="desc">{d.summary}</p>
+      {d.links.length > 0 && (
+        <p class="links">
+          {d.links.map((l) => <a href={l.url} target="_blank" rel="noopener">{l.label} ↗</a>)}
+        </p>
+      )}
+      {facts.length > 0 && (
+        <dl class="facts">
+          {facts.map((f) => (
+            <div><dt>{f.label}</dt><dd>{f.value}</dd></div>
+          ))}
+        </dl>
+      )}
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .head { padding: 0 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 2.75rem; }
+  .back-top {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 2.25rem;
+  }
+  .back-top:hover { color: var(--accent); }
+  h1 { font-size: clamp(1.9rem, 4vw, 2.5rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; }
+  .desc { font-size: 1.05rem; color: var(--muted); margin: 1.1rem 0 0; line-height: 1.55; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.6rem 0 0; }
+  .links a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text);
+    text-decoration: none;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .links a:hover { border-color: var(--accent); color: var(--accent); }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1rem 1.5rem;
+    margin: 2rem 0 0;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    background: var(--bg-raised);
+    border-radius: 0 6px 6px 0;
+  }
+  .facts dt { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .facts dd { margin: 0.2rem 0 0; font-weight: 500; }
+</style>

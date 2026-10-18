@@ -18,6 +18,7 @@ const { posts, showTag = true } = Astro.props;
             {p.data.draft && <span class="draft">draft</span>}
           </span>
           <span class="desc">{p.data.description}</span>
+          {p.data.outcome && <span class="outcome">{p.data.outcome}</span>}
         </span>
         <span class="side">
           <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
@@ -40,6 +41,7 @@ const { posts, showTag = true } = Astro.props;
   }
   li:first-child .row { border-top: 1px solid var(--line); }
   .main { display: flex; flex-direction: column; gap: 0.3rem; }
+  .outcome { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
   .title {
     font-size: 1.2rem;
     font-weight: 550;

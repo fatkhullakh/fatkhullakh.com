@@ -1,5 +1,5 @@
 ---
-title: "airSlate Data Engineer II (MLOps)"
+title: "airSlate · Data Engineer II (MLOps)"
 description: "Every stage of airSlate's Data Engineer II (MLOps) process, with the exact questions I got in each round and how it went."
 date: 2026-10-18
 tag: interviews
@@ -9,14 +9,14 @@ role: "Data Engineer II (MLOps)"
 outcome: "Rejected after the second technical interview"
 ---
 
-## At a glance
+## Short summary
 
 - **Vacancy:** Data Engineer II (MLOps)
 - **Company:** airSlate
 - **Offered salary:** 17,000 PLN (B2B)
 - **Period of recruitment:** June to July
 - **Work format:** remote (Warsaw, Poland)
-- **Stages:** Recruiter call → 1st technical interview → 2nd technical interview → offer
+- **Stages:** Recruiter call → 1st technical interview → 2nd technical interview → Offer
 
 ## About the company and the role
 
@@ -24,7 +24,7 @@ A very interesting company. They build products for editing and signing document
 
 ## Recruiter call
 
-The recruiter reached out to me through LinkedIn (an automated message saying they were impressed by my experience at EPAM and Cognilabs, haha). Nothing much. Just a standard recruiter call with standard questions: previous experience, expected salary, whether I'm allowed to work in Poland, etc.
+The recruiter reached out to me through LinkedIn (an automated message saying they were impressed by my previous experience, haha). Nothing much. Just a standard recruiter call with standard questions: previous experience, expected salary, whether I'm allowed to work in Poland, etc.
 
 ## 1st technical interview (with a Staff ML Engineer)
 

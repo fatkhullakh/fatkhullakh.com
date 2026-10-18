@@ -19,7 +19,7 @@ const facts = [
   d.outcome && { label: "Outcome", value: d.outcome },
 ].filter(Boolean) as { label: string; value: string }[];
 ---
-<Base title={d.title} description={d.description} type="article" centered>
+<Base title={d.company ? `${d.company} ${d.role ?? ""} interview`.replace("  ", " ") : d.title} description={d.description} type="article" centered>
   <article>
     <header class="post-head">
       <a href="/writing" class="back-top">← back to all writing</a>

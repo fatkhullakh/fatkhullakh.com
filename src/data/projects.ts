@@ -3,6 +3,7 @@
 // Two kinds of entries:
 //   1. A GitHub repo: just give `repo`. Name, description, language, stars and link
 //      come from GitHub automatically. Add `summary` to override the description.
+//   Add `slug` to give a project its own page (see src/content/projects/).
 //   2. Anything else (a product, a client project): give name, summary and optionally url.
 //
 // `kind` is the small label above the name.
@@ -14,19 +15,12 @@ export interface Project {
   summary?: string;
   url?: string;
   tags?: string[];
+  slug?: string; // opens a page written in src/content/projects/<slug>.md
 }
 
 export const projects: Project[] = [
-  { repo: "cdc-correctness-lab", kind: "open source" },
-  {
-    name: "Saqla",
-    kind: "product",
-    summary: "A food rescue marketplace connecting shops with leftover food to people who buy it at a discount.",
-    tags: ["AWS", "Payme", "Click"],
-  },
-  {
-    name: "NavbatUz",
-    kind: "product",
-    summary: "A booking platform for local services.",
-  },
+  { repo: "cdc-streaming-lakehouse", kind: "open source", slug: "cdc-streaming-lakehouse" },
+  { repo: "cdc-correctness-lab", kind: "open source", slug: "cdc-correctness-lab" },
+  { name: "Saqla", kind: "product", slug: "saqla" },
+  { name: "NavbatUz", kind: "product", slug: "navbatuz" },
 ];
