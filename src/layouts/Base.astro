@@ -10,8 +10,9 @@ interface Props {
   title?: string;
   description?: string;
   type?: "website" | "article";
+  centered?: boolean;
 }
-const { title, description = SITE.description, type = "website" } = Astro.props;
+const { title, description = SITE.description, type = "website", centered = false } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE.title}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 ---
@@ -46,7 +47,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
       <Sidebar />
       <div class="column">
         <ThemeToggle />
-        <main class="content">
+        <main class:list={["content", { centered }]}>
           <slot />
         </main>
         <Footer />
@@ -74,6 +75,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     padding-top: 6.5rem;
     flex: 1;
   }
+  .content.centered { margin-inline: auto; }
   @media (max-width: 900px) {
     .shell { display: block; position: relative; }
     .column { padding: 0 1rem; }

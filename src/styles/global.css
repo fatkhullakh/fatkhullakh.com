@@ -1,5 +1,6 @@
 @import "@fontsource-variable/schibsted-grotesk";
 @import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/inter";
 
 /*
   Two themes, both neutral. One accent: a plain signal blue.
@@ -10,7 +11,7 @@
   --bg-raised: #13161c;
   --line: #20242c;
   --text: #ececee;
-  --body: #c4c7ce;
+  --body: #b8bdc7;
   --muted: #80858f;
   --accent: #5b9dff;
   --accent-ink: #0b0d11;
@@ -24,7 +25,7 @@
   --bg-raised: #eceef1;
   --line: #dde0e5;
   --text: #121419;
-  --body: #2e323a;
+  --body: #20242b;
   --muted: #646a75;
   --accent: #1f5fe0;
   --accent-ink: #ffffff;
@@ -142,8 +143,10 @@ h3 {
 
 /* Essay body */
 .prose {
-  font-size: 1.125rem;
-  line-height: 1.78;
+  font-family: "Inter Variable", var(--sans);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  font-weight: 400;
   color: var(--body);
 }
 .prose > * + * {
@@ -159,11 +162,14 @@ h3 {
   color: var(--text);
 }
 .prose h2 {
-  font-size: 1.75rem;
-  margin-top: 2.2em;
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 2.4em;
 }
 .prose h3 {
-  font-size: 1.35rem;
+  font-size: 1.2rem;
+  font-weight: 600;
   margin-top: 1.8em;
 }
 .prose a {
@@ -171,7 +177,7 @@ h3 {
   text-decoration-color: var(--accent);
 }
 .prose strong {
-  font-weight: 650;
+  font-weight: 600;
   color: var(--text);
 }
 .prose ul,
@@ -188,7 +194,7 @@ h3 {
   margin-left: 0;
   padding-left: 1.1em;
   border-left: 2px solid var(--accent);
-  color: var(--text);
+  color: var(--body);
 }
 .prose hr {
   border: 0;

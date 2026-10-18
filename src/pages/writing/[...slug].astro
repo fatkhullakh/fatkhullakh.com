@@ -19,7 +19,7 @@ const facts = [
   d.outcome && { label: "Outcome", value: d.outcome },
 ].filter(Boolean) as { label: string; value: string }[];
 ---
-<Base title={d.title} description={d.description} type="article">
+<Base title={d.title} description={d.description} type="article" centered>
   <article>
     <header class="post-head">
       <a href="/writing" class="back-top">← back to all writing</a>
@@ -58,8 +58,8 @@ const facts = [
     margin: 0 0 1.25rem;
   }
   .meta a { color: var(--accent); text-decoration: none; }
-  h1 { font-size: clamp(2.1rem, 5vw, 3rem); font-weight: 650; letter-spacing: -0.04em; line-height: 1.08; }
-  .desc { font-size: 1.15rem; color: var(--muted); margin: 1.1rem 0 0; line-height: 1.55; }
+  h1 { font-size: clamp(1.9rem, 4vw, 2.5rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; }
+  .desc { font-size: 1.05rem; color: var(--muted); margin: 1.1rem 0 0; line-height: 1.55; }
   .facts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
