@@ -19,8 +19,7 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  { repo: "cdc-streaming-lakehouse", kind: "open source", slug: "cdc-streaming-lakehouse" },
   { repo: "cdc-correctness-lab", kind: "open source", slug: "cdc-correctness-lab" },
   { name: "Saqla", kind: "product", slug: "saqla" },
-  { name: "NavbatUz", kind: "product", slug: "navbatuz" },
+  { name: "NavbatUz", kind: "product", slug: "soniya" },
 ];
