@@ -1,5 +1,5 @@
 ---
-title: "airSlate Data Engineer II (MLOps) interview: ML theory, Python, SQL and system design"
+title: "airSlate Data Engineer II (MLOps)"
 description: "Every stage of airSlate's Data Engineer II (MLOps) process, with the exact questions I got in each round and how it went."
 date: 2026-10-18
 tag: interviews
