@@ -1,6 +1,6 @@
 ---
-title: "Fresha Analytics Engineer interview: a live SQL test on avatars"
-description: "Fresha's live SQL round for the Analytics Engineer role: the exact tasks, my answers, and the correct ones."
+title: "Fresha · Analytics Engineer"
+description: "Every stage of Fresha's Analytics Engineer process, with the exact questions I got in the SQL test and how it went."
 date: 2026-11-14
 tag: interviews
 draft: false
